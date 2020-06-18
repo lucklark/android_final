@@ -4,12 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.SpannableString;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,13 +22,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.homework.notes.RichText;
+
+import java.io.File;
 
 
 public class NewNotes extends AppCompatActivity {
 
     EditText title;
-    EditText content;
+    RichText content;
     Button start_remembering;
+
+    private String imagePath;
+    private int RESULT_LOAD_IMAGE = 200;
+    private String saveDir = Environment.getExternalStorageDirectory()
+            .getPath() + "/temp_image";
 
     private boolean doubleBackToExitPressedOnce = false;
 
@@ -44,7 +57,7 @@ public class NewNotes extends AppCompatActivity {
         //yourTextView.setTypeface(face);
 
         title = (EditText) findViewById(R.id.title);
-        content = (EditText) findViewById(R.id.content);
+        content = (RichText) findViewById(R.id.content);
 
         title.setTypeface(face);
         content.setTypeface(face);
@@ -120,30 +133,45 @@ public class NewNotes extends AppCompatActivity {
             localBuilder.show();
             return true;
         }
+        if (id == R.id.image) {
+
+            //相册上传
+            Intent i = new Intent(
+                    Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(i, RESULT_LOAD_IMAGE);
+
+
+            File savePath = new File(saveDir);
+            if (!savePath.exists()) {
+                savePath.mkdirs();
+            }
+
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
-    /*
-    @Override
-    public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
 
-            super.onBackPressed();
-            return;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (null != data) {
+            Uri selectedImage = data.getData();
+
+            Log.i("URI",selectedImage.toString());
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            imagePath = cursor.getString(columnIndex);
+            Log.i("PATH",imagePath);
+            cursor.close();
+            content.insertImage(imagePath);
+
         }
 
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click back once more to exit", Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce=false;
-            }
-        }, 2000);
-    }*/
+    }
 }

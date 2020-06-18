@@ -8,14 +8,16 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.SpannableString;
 import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
+import android.text.Html.ImageGetter;
 
 public class AnswerCard extends AppCompatActivity {
     TextView title_tv;
@@ -30,10 +32,9 @@ public class AnswerCard extends AppCompatActivity {
         getSupportActionBar().setTitle("Note");
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00b5b5")));
         int titleId = getResources().getIdentifier("action_bar_title", "id","android");
-        TextView yourTextView = (TextView) findViewById(titleId);
-        yourTextView.setTextSize(30);
+
         Typeface face = Typeface.createFromAsset(getAssets(),"Roboto-Thin.ttf");
-        yourTextView.setTypeface(face);
+
 
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");
@@ -49,11 +50,25 @@ public class AnswerCard extends AppCompatActivity {
         content_tv.setTypeface(face);
 
         title_tv.setText(title);
-        content_tv.setText(content);
-        //Toast.makeText(getApplicationContext(),content,Toast.LENGTH_LONG).show();
+        ImageGetter imageGetter = new ImageGetter() {
+            @Override
+            public Drawable getDrawable(String source) {
+                Drawable d = null;
+                try {
+                    int id = Integer.parseInt(source);
+                    d = getResources().getDrawable(id);
+                } catch (Exception e) {
+                    d = Drawable.createFromPath(source);
+                    d.setBounds(0,0,d.getIntrinsicWidth(),d.getIntrinsicHeight());
+                    return d;
+                }
+                d.setBounds(0,0,d.getIntrinsicWidth(),d.getIntrinsicHeight());
+                return d;
+            }
+        };
 
-
-
+        content = content.replace("\n","<br>");
+        content_tv.setText(Html.fromHtml(content,imageGetter,null));
 
 
     }
@@ -98,28 +113,5 @@ public class AnswerCard extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    /*
-    @Override
-    public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
 
-            super.onBackPressed();
-            return;
-        }
-
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click back once more to exit", Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce=false;
-            }
-        }, 2000);
-    }*/
 }

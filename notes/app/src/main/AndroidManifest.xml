@@ -1,20 +1,65 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.homework.notes">
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme"
+        android:requestLegacyExternalStorage="true">
+
+        <activity
+            android:name="com.homework.notes.MainActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewNotes"/>
+        <activity
+            android:name="com.homework.notes.NewNotes"
+            android:label="@string/title_activity_new_notes"
+            android:parentActivityName="com.homework.notes.MainActivity"
+
+            android:windowSoftInputMode="adjustPan">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Notes" />
+        </activity>
+        <activity
+            android:name="com.homework.notes.AnswerCard"
+            android:label="@string/title_activity_answer_card"
+            android:parentActivityName="com.homework.notes.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Notes" />
+        </activity>
+        <activity
+            android:name="com.homework.notes.NotesFragment"
+            android:label="NotesFragment"
+            android:parentActivityName="com.homework.notes.MainActivity"
+            >
+
+        </activity>
+
+        <service
+            android:name="com.homework.notes.SpacedService"
+            android:enabled="true"
+            android:icon="@drawable/ic_launcher"
+            >
+        </service>
+
+        <receiver
+            android:name="com.homework.notes.MyReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

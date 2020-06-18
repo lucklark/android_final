@@ -30,6 +30,7 @@ public class NotesDataSource {
 
     public long insertNotes(String title, String content)
     {
+        content = HtmltoString(content);
         this.open();
         ContentValues insertValues = new ContentValues();
         insertValues.put(SQLiteHelper.COLUMN_TITLE, title);
@@ -43,6 +44,7 @@ public class NotesDataSource {
     }
     public long deleteOne(String title, String content)
     {
+        content = HtmltoString(content);
         this.open();
         database.delete(SQLiteHelper.TABLE_NOTES, SQLiteHelper.COLUMN_CONTENT + " = ?", new String[] { String.valueOf(content) });
         this.close();
@@ -50,6 +52,7 @@ public class NotesDataSource {
     }
     public long incrementTotalReviews(String content)
     {
+        content = HtmltoString(content);
         this.open();
         String sql = "UPDATE " + SQLiteHelper.TABLE_NOTES +
                 " SET " + SQLiteHelper.COLUMN_TOTAL_REVIEWS + "=" + SQLiteHelper.COLUMN_TOTAL_REVIEWS + "+1" +
@@ -65,6 +68,7 @@ public class NotesDataSource {
     }
     public long modifyLastSeen(String content)
     {
+        content = HtmltoString(content);
         this.open();
         String sql = "UPDATE " + SQLiteHelper.TABLE_NOTES +
                 " SET " + SQLiteHelper.COLUMN_LAST_REVIEWED + "=" + System.currentTimeMillis()+
@@ -90,7 +94,7 @@ public class NotesDataSource {
                 String last_reviewed = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_LAST_REVIEWED));
                 String total_reviews = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TOTAL_REVIEWS));
                 String content  = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_CONTENT));
-
+                content = StringtoHtml(content);
                 NoteItems item = new NoteItems(title,last_reviewed,total_reviews,content);
                 items.add(item);
                 cursor.moveToNext();
@@ -113,7 +117,7 @@ public class NotesDataSource {
                 String last_reviewed = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_LAST_REVIEWED));
                 String total_reviews = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TOTAL_REVIEWS));
                 String content  = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_CONTENT));
-
+                content = StringtoHtml(content);
                 NoteItems item = new NoteItems(title,last_reviewed,total_reviews,content);
                 long past_epoch = Long.valueOf(item.last_reviewed);
                 long current_epoch = System.currentTimeMillis();
@@ -190,5 +194,20 @@ public class NotesDataSource {
             return false;
         }
 
+    }
+
+    public String HtmltoString(String Html){
+        Html = Html.replace("<","&lt");
+        Html = Html.replace(">","&gt");
+        Html = Html.replace("/","&frasl");
+        Html = Html.replace("'","&dot");
+        return Html;
+    }
+    public String StringtoHtml(String str){
+        str = str.replace("&lt","<");
+        str = str.replace("&gt",">");
+        str = str.replace("&frasl","/");
+        str = str.replace("&dot","'");
+        return str;
     }
 }

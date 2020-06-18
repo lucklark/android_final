@@ -19,21 +19,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/title"
         android:inputType="textCapSentences"
-
-
-
-
         />
 
-    <EditText
+    <com.homework.notes.RichText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:maxLines="10"
         android:hint="Content"
         android:layout_marginBottom="20dp"
-        android:id="@+id/content"
-
-        />
+        android:id="@+id/content" />
 
 
     <Button
@@ -42,7 +36,6 @@
         android:text="Start Remembering"
         android:textColor="#fff"
         android:background="@drawable/buttonselect"
-
         android:layout_height="wrap_content" />
 
 
