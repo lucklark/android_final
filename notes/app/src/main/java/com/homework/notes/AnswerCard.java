@@ -31,9 +31,9 @@ public class AnswerCard extends AppCompatActivity {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00b5b5")));
         int titleId = getResources().getIdentifier("action_bar_title", "id","android");
         TextView yourTextView = (TextView) findViewById(titleId);
-        //yourTextView.setTextSize(30);
+        yourTextView.setTextSize(30);
         Typeface face = Typeface.createFromAsset(getAssets(),"Roboto-Thin.ttf");
-        //yourTextView.setTypeface(face);
+        yourTextView.setTypeface(face);
 
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");
@@ -51,6 +51,8 @@ public class AnswerCard extends AppCompatActivity {
         title_tv.setText(title);
         content_tv.setText(content);
         //Toast.makeText(getApplicationContext(),content,Toast.LENGTH_LONG).show();
+
+
 
 
 

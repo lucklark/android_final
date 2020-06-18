@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="50dp"
+    android:paddingRight="50dp">
+
+    <LinearLayout
+        android:id="@+id/notes_lay"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="20dp">
+
+        <ImageButton
+            android:id="@+id/notes_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:clickable="false"
+            android:scaleType="centerInside"
+            android:background="#00000000"
+            android:src="@drawable/ic_clipboard_regular" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/class_lay"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="20dp">
+
+        <ImageButton
+            android:id="@+id/class_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:clickable="false"
+            android:scaleType="centerInside"
+            android:background="#00000000"
+            android:src="@drawable/ic_copy_regular" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/usr_lay"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="20dp">
+
+        <ImageButton
+            android:id="@+id/usr_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:clickable="false"
+            android:scaleType="centerInside"
+            android:background="#00000000"
+            android:src="@drawable/ic_user_regular" />
+
+    </LinearLayout>
+
+</LinearLayout>

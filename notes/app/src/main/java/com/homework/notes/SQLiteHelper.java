@@ -15,6 +15,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TOTAL_REVIEWS = "total_reviews";
     public static final String COLUMN_CONTENT = "content";
 
+    // ADD: class table
+    public static final String TABLE_CLASS = "class_table";
+    public static final String COLUMN_CLASS_ID = "_id";
+    public static final String COLUMN_CLASS_NAME = "class_name";
+    public static final String COLUMN_NOTES_NUM = "notes_num";
+    public static final String COLUMN_CLASS_ORDER = "class_order";
+
     private static final String DATABASE_NAME = "notes.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -37,7 +44,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 COLUMN_TOTAL_REVIEWS + " INT NOT NULL, " +
                 COLUMN_CONTENT + " TEXT NOT NULL);"
         );
-
+        // ADD: create class_table
+        database.execSQL(" CREATE TABLE " + TABLE_CLASS + " (" +
+                COLUMN_CLASS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_CLASS_NAME + " TEXT NOT NULL, " +
+                COLUMN_NOTES_NUM + " INTEGER, " +
+                COLUMN_CLASS_ORDER + " INTEGER);"
+        );
     }
 
     @Override
@@ -49,4 +62,20 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public void createTable(SQLiteDatabase database) {
+        database.execSQL(" CREATE TABLE IF NOT EXISTS " + TABLE_NOTES + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_TITLE + " TEXT NOT NULL, " +
+                COLUMN_LAST_REVIEWED + " TEXT NOT NULL, " +
+                COLUMN_TOTAL_REVIEWS + " INT NOT NULL, " +
+                COLUMN_CONTENT + " TEXT NOT NULL);"
+        );
+        // ADD: create class_table
+        database.execSQL(" CREATE TABLE IF NOT EXISTS " + TABLE_CLASS + " (" +
+                COLUMN_CLASS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_CLASS_NAME + " TEXT NOT NULL, " +
+                COLUMN_NOTES_NUM + " INTEGER, " +
+                COLUMN_CLASS_ORDER + " INTEGER);"
+        );
+    }
 }
