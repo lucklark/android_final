@@ -38,6 +38,8 @@ public class NewNotes extends AppCompatActivity {
     private String saveDir = Environment.getExternalStorageDirectory()
             .getPath() + "/temp_image";
 
+    private String note_class;
+
     private boolean doubleBackToExitPressedOnce = false;
 
     @Override
@@ -56,6 +58,10 @@ public class NewNotes extends AppCompatActivity {
         Typeface face = Typeface.createFromAsset(getAssets(),"Roboto-Thin.ttf");
         //yourTextView.setTypeface(face);
 
+        // ADD: get note_class from main_activity
+        Intent r_intent = getIntent();
+        note_class = r_intent.getStringExtra("note_class");
+
         title = (EditText) findViewById(R.id.title);
         content = (RichText) findViewById(R.id.content);
 
@@ -73,10 +79,14 @@ public class NewNotes extends AppCompatActivity {
                     NotesDataSource nds = new NotesDataSource(getApplicationContext());
                     if (!title.getText().toString().trim().isEmpty() && !content.getText().toString().trim().isEmpty() )
                     {
-                        nds.insertNotes(title.getText().toString(),content.getText().toString());
+                        nds.insertNotes(title.getText().toString(),content.getText().toString(),note_class);
+                        ClassDataSource cds = new ClassDataSource(getApplicationContext());
+                        cds.incrementNotesNum(note_class);
                         Toast.makeText(getApplicationContext(),"Note Added.",Toast.LENGTH_LONG).show();
                         Intent i = new Intent(NewNotes.this,MainActivity.class);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        //i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        //i.putExtra("new_note","success");
                         startActivity(i);
                     }
                     else

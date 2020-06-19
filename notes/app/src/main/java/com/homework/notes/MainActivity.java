@@ -14,6 +14,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -45,7 +46,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener,ClassFragment.toActivityListener{
     private Fragment notes_frag;
     private Fragment class_frag;
     private Fragment usr_frag;
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton class_button;
     private ImageButton usr_button;
 
+    private TextView selected_class_text;
+
     private LinearLayout notes_lay;
     private LinearLayout class_lay;
     private LinearLayout usr_lay;
@@ -61,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FragmentTransaction ftr;
 
     private int selected_tab;
+    private String selected_class;
+
+    final static String DEFAULT_CLASS = "default";
 
     private boolean doubleBackToExitPressedOnce = false;
 
@@ -71,12 +77,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //setContentView(R.layout.activity_notes);
         setContentView(R.layout.tab_layout);
 
+        initDatabase();
+
+        selected_class = DEFAULT_CLASS;
+
         initView(); // view initialization(v1)
 
         initEvent(); // fragmentation event initialization
 
         setSelected(0);
 
+    }
+
+    private void initDatabase() {
+        SQLiteHelper sqLiteHelper = new SQLiteHelper(this);
+        SQLiteDatabase database = sqLiteHelper.getWritableDatabase();
+        sqLiteHelper.createTable(database);
     }
 
     private void initEvent() {
@@ -94,6 +110,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         class_lay = (LinearLayout) findViewById(R.id.class_lay);
         usr_lay = (LinearLayout) findViewById(R.id.usr_lay);
 
+        selected_class_text = (TextView) findViewById(R.id.current_class);
+
         //getSupportActionBar().setIcon(new ColorDrawable(getResources().getColor(17170445)));
         getSupportActionBar().setTitle("Notes");
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00b5b5")));
@@ -101,8 +119,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClick(View v) {
-        resetBtn();
-
         switch (v.getId()) {
             case R.id.notes_lay:
                 setSelected(0);
@@ -120,9 +136,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         notes_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_clipboard_regular));
         class_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_copy_regular));
         usr_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_user_regular));
+        selected_class_text.setTextColor(this.getColor(R.color.regular));
+        selected_class_text.setAlpha(0.5f);
     }
 
     public void setSelected(int i) {
+        resetBtn();
         // get transaction
         FragmentManager fm = getSupportFragmentManager();
         // begin transaction
@@ -135,10 +154,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (i) {
             case 0:
                 if(notes_frag == null) {
-                    notes_frag = new NotesFragment();
+                    notes_frag = NotesFragment.newInstance(selected_class);
                     ftr.add(R.id.tab_frame, notes_frag);
                 }
                 notes_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_clipboard_solid));
+                selected_class_text.setVisibility(View.GONE);
+                if(selected_class != DEFAULT_CLASS) {
+                    selected_class_text.setText(selected_class);
+                    selected_class_text.setVisibility(View.VISIBLE);
+                    selected_class_text.setTextColor(this.getColor(R.color.solid));
+                    selected_class_text.setAlpha(1.0f);
+                }
+
                 ftr.show(notes_frag);
                 break;
             case 1:
@@ -193,7 +220,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (i == R.id.newNotes)
         {
             if(selected_tab == 0) {
-                startActivity(new Intent(this, NewNotes.class));
+                // ADD: send note class to new_note activity
+                Intent new_notes_intent = new Intent(this, NewNotes.class);
+                new_notes_intent.putExtra("note_class",selected_class);
+                startActivity(new_notes_intent);
             }
             else if(selected_tab == 1) {
                 newClassDialog();
@@ -278,6 +308,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                 Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
             }
+        }
+    }
+
+    @Override
+    public void setSelectedClass(String selected_class) {
+        if(selected_class != this.selected_class) {
+            this.selected_class = selected_class;
+            // get transaction
+            FragmentManager fm = getSupportFragmentManager();
+            // begin transaction
+            ftr = fm.beginTransaction();
+            ftr.remove(notes_frag);
+            notes_frag = NotesFragment.newInstance(selected_class);
+            ftr.add(R.id.tab_frame, notes_frag);
+            ftr.commit();
+        }
+        setSelected(0);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if(intent.getStringExtra("new_note") == "success") {
+            this.selected_class = selected_class;
+            // get transaction
+            FragmentManager fm = getSupportFragmentManager();
+            // begin transaction
+            ftr = fm.beginTransaction();
+            ftr.remove(notes_frag);
+            notes_frag = NotesFragment.newInstance(selected_class);
+            ftr.add(R.id.tab_frame, notes_frag);
+            ftr.commit();
         }
     }
 }

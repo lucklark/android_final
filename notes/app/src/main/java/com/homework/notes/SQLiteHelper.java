@@ -8,12 +8,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
-    public static final String TABLE_NOTES = "notes";
+    public static final String TABLE_NOTES = "notes2";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_LAST_REVIEWED = "last_reviewed";
     public static final String COLUMN_TOTAL_REVIEWS = "total_reviews";
     public static final String COLUMN_CONTENT = "content";
+    // ADD: note class
+    public static final String COLUMN_NOTE_CLASS = "note_class";
 
     // ADD: class table
     public static final String TABLE_CLASS = "class_table";
@@ -42,7 +44,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 COLUMN_TITLE + " TEXT NOT NULL, " +
                 COLUMN_LAST_REVIEWED + " TEXT NOT NULL, " +
                 COLUMN_TOTAL_REVIEWS + " INT NOT NULL, " +
-                COLUMN_CONTENT + " TEXT NOT NULL);"
+                COLUMN_CONTENT + " TEXT NOT NULL, " +
+                COLUMN_NOTE_CLASS + " TEXT NOT NULL);"
         );
         // ADD: create class_table
         database.execSQL(" CREATE TABLE " + TABLE_CLASS + " (" +
@@ -68,7 +71,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 COLUMN_TITLE + " TEXT NOT NULL, " +
                 COLUMN_LAST_REVIEWED + " TEXT NOT NULL, " +
                 COLUMN_TOTAL_REVIEWS + " INT NOT NULL, " +
-                COLUMN_CONTENT + " TEXT NOT NULL);"
+                COLUMN_CONTENT + " TEXT NOT NULL, " +
+                COLUMN_NOTE_CLASS + " TEXT NOT NULL);"
         );
         // ADD: create class_table
         database.execSQL(" CREATE TABLE IF NOT EXISTS " + TABLE_CLASS + " (" +

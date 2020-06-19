@@ -35,10 +35,20 @@ public class NotesFragment extends Fragment {
 
     TextView tips;
 
+    String notes_class;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+    }
+
+    public static NotesFragment newInstance(String note_class) {
+        NotesFragment notes_frag = new NotesFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("note_class",note_class);
+        notes_frag.setArguments(bundle);
+        return notes_frag;
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,6 +66,9 @@ public class NotesFragment extends Fragment {
                 "Just click on the + icon and start adding notes and let the app handle the rest\n\n" +
                 "Warning: Having too many notes at once could lead to multiple notification making this app unusable, limit to few notes at a time to get the most from the app");
         tips.setText(localSpannableString);
+
+        Bundle bundle = getArguments();
+        notes_class = bundle.getString("note_class");
         List<NoteItems> items = getDataForListView();
         if (items.size() != 0)
         {
@@ -86,8 +99,9 @@ public class NotesFragment extends Fragment {
 
     public List<NoteItems> getDataForListView()
     {
-        items = new NotesDataSource(mContext.getApplicationContext()).getAllNotes();
-        Log.d(TAG, "getDataForListView: "+items.get(0).toString());
+        // items = new NotesDataSource(mContext.getApplicationContext()).getAllNotes();
+        items = new NotesDataSource(mContext.getApplicationContext()).getNotesOfClass(notes_class);
+        // Log.d(TAG, "getDataForListView: "+items.get(0).toString());
         Collections.sort(items, new Comparator<NoteItems>(){
             public int compare(NoteItems s1, NoteItems s2) {
                 return s1.total_reviews.compareToIgnoreCase(s2.total_reviews);

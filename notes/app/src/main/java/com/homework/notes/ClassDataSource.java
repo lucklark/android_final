@@ -23,7 +23,6 @@ public class ClassDataSource {
 
     public void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
-        dbHelper.createTable(database);
     }
 
     public void close() {

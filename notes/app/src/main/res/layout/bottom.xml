@@ -10,9 +10,11 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:gravity="center"
-        android:padding="20dp">
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp"
+        android:animateLayoutChanges="true">
 
         <ImageButton
             android:id="@+id/notes_btn"
@@ -22,6 +24,22 @@
             android:scaleType="centerInside"
             android:background="#00000000"
             android:src="@drawable/ic_clipboard_regular" />
+
+        <TextView
+            android:id="@+id/current_class"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:maxEms="15"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:textSize="8pt"
+            android:textStyle="italic"
+            android:layout_marginLeft="5dp"
+            android:textColor="#00a497"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

@@ -28,13 +28,14 @@ public class NotesDataSource {
         dbHelper.close();
     }
 
-    public long insertNotes(String title, String content)
+    public long insertNotes(String title, String content, String note_class)
     {
         content = HtmltoString(content);
         this.open();
         ContentValues insertValues = new ContentValues();
         insertValues.put(SQLiteHelper.COLUMN_TITLE, title);
         insertValues.put(SQLiteHelper.COLUMN_CONTENT, content);
+        insertValues.put(SQLiteHelper.COLUMN_NOTE_CLASS, note_class);
         long epoch = System.currentTimeMillis();
         insertValues.put(SQLiteHelper.COLUMN_LAST_REVIEWED, epoch);
         insertValues.put(SQLiteHelper.COLUMN_TOTAL_REVIEWS, 0);
@@ -85,7 +86,7 @@ public class NotesDataSource {
     public ArrayList<NoteItems> getAllNotes() {
         this.open();
         ArrayList<NoteItems> items = new ArrayList<NoteItems>();
-        Cursor  cursor = database.rawQuery("select * from notes",null);
+        Cursor  cursor = database.rawQuery("select * from "+SQLiteHelper.TABLE_NOTES,null);
 
         if (cursor .moveToFirst()) {
 
@@ -95,7 +96,8 @@ public class NotesDataSource {
                 String total_reviews = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TOTAL_REVIEWS));
                 String content  = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_CONTENT));
                 content = StringtoHtml(content);
-                NoteItems item = new NoteItems(title,last_reviewed,total_reviews,content);
+                String note_class = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_NOTE_CLASS));
+                NoteItems item = new NoteItems(title,last_reviewed,total_reviews,content,note_class);
                 items.add(item);
                 cursor.moveToNext();
             }
@@ -104,11 +106,10 @@ public class NotesDataSource {
         return items;
     }
 
-
-    public List<NoteItems> getAllNotesForNotification() {
+    public ArrayList<NoteItems> getNotesOfClass(String note_class) {
         this.open();
-        List<NoteItems> items = new ArrayList<NoteItems>();
-        Cursor  cursor = database.rawQuery("select * from notes",null);
+        ArrayList<NoteItems> items = new ArrayList<NoteItems>();
+        Cursor  cursor = database.rawQuery("select * from " + SQLiteHelper.TABLE_NOTES + " where "+SQLiteHelper.COLUMN_NOTE_CLASS + " = ?",new String[]{note_class});
 
         if (cursor .moveToFirst()) {
 
@@ -118,7 +119,30 @@ public class NotesDataSource {
                 String total_reviews = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TOTAL_REVIEWS));
                 String content  = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_CONTENT));
                 content = StringtoHtml(content);
-                NoteItems item = new NoteItems(title,last_reviewed,total_reviews,content);
+                NoteItems item = new NoteItems(title,last_reviewed,total_reviews,content,note_class);
+                items.add(item);
+                cursor.moveToNext();
+            }
+        }
+        this.close();
+        return items;
+    }
+
+    public List<NoteItems> getAllNotesForNotification() {
+        this.open();
+        List<NoteItems> items = new ArrayList<NoteItems>();
+        Cursor  cursor = database.rawQuery("select * from "+SQLiteHelper.TABLE_NOTES,null);
+
+        if (cursor .moveToFirst()) {
+
+            while (!cursor.isAfterLast()) {
+                String title = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TITLE));
+                String last_reviewed = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_LAST_REVIEWED));
+                String total_reviews = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TOTAL_REVIEWS));
+                String content  = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_CONTENT));
+                content = StringtoHtml(content);
+                String note_class = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_NOTE_CLASS));
+                NoteItems item = new NoteItems(title,last_reviewed,total_reviews,content,note_class);
                 long past_epoch = Long.valueOf(item.last_reviewed);
                 long current_epoch = System.currentTimeMillis();
                 long difference = current_epoch - past_epoch;

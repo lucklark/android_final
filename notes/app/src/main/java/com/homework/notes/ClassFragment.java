@@ -1,12 +1,15 @@
 package com.homework.notes;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -21,11 +24,21 @@ import java.util.ArrayList;
 
 public class ClassFragment extends Fragment {
 
+    private toActivityListener mToActivityListener;
+
     private ListView class_lv;
 
     private ClassAdapter class_adapter;
 
     private ClassDataSource class_data_src;
+
+    final static String DEFAULT_CLASS = "default";
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mToActivityListener = (toActivityListener)activity;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,10 +53,19 @@ public class ClassFragment extends Fragment {
         class_lv = v.findViewById(R.id.class_lv);
 
         class_data_src = new ClassDataSource(getContext());
+        class_data_src.insertClass(DEFAULT_CLASS);
 
         class_adapter = new ClassAdapter(class_data_src.getAllClass());
 
         class_lv.setAdapter(class_adapter);
+
+        class_lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ClassItems item = (ClassItems) class_adapter.getItem(position);
+                mToActivityListener.setSelectedClass(item.class_name);
+            }
+        });
 
         return v;
     }
@@ -96,7 +118,7 @@ public class ClassFragment extends Fragment {
         }
     }
 
-    public void test() {
-
+    public interface toActivityListener {
+        void setSelectedClass(String selected_class);
     }
 }
