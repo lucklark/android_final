@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setSelected(0);
 
+        requestAllPower();
     }
 
     private void initDatabase() {
@@ -159,12 +160,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 notes_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_clipboard_solid));
                 selected_class_text.setVisibility(View.GONE);
-                if(selected_class != DEFAULT_CLASS) {
-                    selected_class_text.setText(selected_class);
-                    selected_class_text.setVisibility(View.VISIBLE);
-                    selected_class_text.setTextColor(this.getColor(R.color.solid));
-                    selected_class_text.setAlpha(1.0f);
-                }
+                selected_class_text.setText(selected_class);
+                selected_class_text.setVisibility(View.VISIBLE);
+                selected_class_text.setTextColor(this.getColor(R.color.solid));
+                selected_class_text.setAlpha(1.0f);
 
                 ftr.show(notes_frag);
                 break;
@@ -273,6 +272,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             FragmentManager fm = getSupportFragmentManager();
                             // begin transaction
                             ftr = fm.beginTransaction();
+                            hideTransaction(ftr);
                             ftr.remove(class_frag);
                             class_frag = new ClassFragment();
                             ftr.add(R.id.tab_frame, class_frag);
@@ -295,7 +295,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //权限动态申请
-
     public void requestAllPower() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -311,35 +310,58 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public void readdNotesFrag() {
+        // get transaction
+        FragmentManager fm = getSupportFragmentManager();
+        // begin transaction
+        ftr = fm.beginTransaction();
+        hideTransaction(ftr);
+        ftr.remove(notes_frag);
+        notes_frag = NotesFragment.newInstance(selected_class);
+        ftr.add(R.id.tab_frame, notes_frag);
+        ftr.commit();
+    }
+
+    public void readdClassFrag() {
+        // get transaction
+        FragmentManager fm = getSupportFragmentManager();
+        // begin transaction
+        ftr = fm.beginTransaction();
+        hideTransaction(ftr);
+        ftr.remove(class_frag);
+        class_frag = new ClassFragment();
+        ftr.add(R.id.tab_frame, class_frag);
+        ftr.commit();
+    }
+
     @Override
     public void setSelectedClass(String selected_class) {
         if(selected_class != this.selected_class) {
             this.selected_class = selected_class;
-            // get transaction
-            FragmentManager fm = getSupportFragmentManager();
-            // begin transaction
-            ftr = fm.beginTransaction();
-            ftr.remove(notes_frag);
-            notes_frag = NotesFragment.newInstance(selected_class);
-            ftr.add(R.id.tab_frame, notes_frag);
-            ftr.commit();
+            readdNotesFrag();
         }
         setSelected(0);
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        if(intent.getStringExtra("new_note") == "success") {
-            this.selected_class = selected_class;
-            // get transaction
-            FragmentManager fm = getSupportFragmentManager();
-            // begin transaction
-            ftr = fm.beginTransaction();
-            ftr.remove(notes_frag);
-            notes_frag = NotesFragment.newInstance(selected_class);
-            ftr.add(R.id.tab_frame, notes_frag);
-            ftr.commit();
+    public void resetSelectedNotes(String del_class) {
+        if(selected_class == del_class) {
+            selected_class = DEFAULT_CLASS;
+            selected_class_text.setText(selected_class);
+            readdNotesFrag();
+            setSelected(1);
         }
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        readdNotesFrag();
+
+        readdClassFrag();
+
+        setSelected(0);
+    }
+
 }
