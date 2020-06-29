@@ -43,6 +43,7 @@ public class NotesDataSource {
         this.close();
         return val;
     }
+
     public long deleteOne(String title, String content)
     {
         content = HtmltoString(content);
@@ -51,6 +52,15 @@ public class NotesDataSource {
         this.close();
         return 0;
     }
+
+    public long deleteByClass(String class_name)
+    {
+        this.open();
+        database.delete(SQLiteHelper.TABLE_NOTES, SQLiteHelper.COLUMN_NOTE_CLASS + " = ?", new String[] { class_name });
+        this.close();
+        return 0;
+    }
+
     public long incrementTotalReviews(String content)
     {
         content = HtmltoString(content);

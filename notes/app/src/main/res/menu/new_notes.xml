@@ -5,7 +5,7 @@
     tools:context="com.homework.notes.NewNotes" >
     <item android:id="@+id/image"
         android:title="Image"
-        android:icon="@drawable/ic_action_about"
+        android:icon="@drawable/ic_images_regular"
         android:orderInCategory="100"
         app:showAsAction="always"
         />

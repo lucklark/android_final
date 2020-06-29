@@ -8,6 +8,7 @@
         android:orderInCategory="100"
         android:icon="@drawable/ic_action_new"
         app:showAsAction="always" />
+
     <item android:id="@+id/about"
         android:title="About"
         android:orderInCategory="101"

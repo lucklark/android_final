@@ -1,17 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/class_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12pt"/>
-    <TextView
-        android:id="@+id/notes_num"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#80989b"/>
+        <TextView
+            android:id="@+id/class_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12pt"/>
+        <TextView
+            android:id="@+id/notes_num"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#80989b"/>
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/del_class_btn"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:scaleType="centerInside"
+        android:background="#00000000"
+        android:src="@drawable/ic_trash_alt_regular"
+        android:visibility="gone"
+        android:layout_margin="5dp" />
 
 </LinearLayout>

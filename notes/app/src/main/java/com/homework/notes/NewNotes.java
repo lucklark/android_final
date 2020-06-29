@@ -82,8 +82,8 @@ public class NewNotes extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"Note Added.",Toast.LENGTH_LONG).show();
                         Intent i = new Intent(NewNotes.this,MainActivity.class);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        //i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        //i.putExtra("new_note","success");
+                        i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        i.putExtra("new_note","success");
                         startActivity(i);
                     }
                     else
