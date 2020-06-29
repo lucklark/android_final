@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.text.Html.ImageGetter;
+import android.text.method.LinkMovementMethod;
 
 public class AnswerCard extends AppCompatActivity {
     TextView title_tv;
@@ -68,9 +69,9 @@ public class AnswerCard extends AppCompatActivity {
         };
 
         content = content.replace("\n","<br>");
-        content_tv.setText(Html.fromHtml(content,imageGetter,null));
-
-
+        AppTagHandler h = new AppTagHandler(this);
+        content_tv.setText(Html.fromHtml(content,imageGetter,h));
+        content_tv.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
 

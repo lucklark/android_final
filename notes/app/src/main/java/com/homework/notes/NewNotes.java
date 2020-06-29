@@ -24,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.homework.notes.RichText;
 
-import java.io.File;
 
 
 public class NewNotes extends AppCompatActivity {
@@ -35,8 +34,6 @@ public class NewNotes extends AppCompatActivity {
 
     private String imagePath;
     private int RESULT_LOAD_IMAGE = 200;
-    private String saveDir = Environment.getExternalStorageDirectory()
-            .getPath() + "/temp_image";
 
     private String note_class;
 
@@ -151,12 +148,6 @@ public class NewNotes extends AppCompatActivity {
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(i, RESULT_LOAD_IMAGE);
 
-
-            File savePath = new File(saveDir);
-            if (!savePath.exists()) {
-                savePath.mkdirs();
-            }
-
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -168,7 +159,7 @@ public class NewNotes extends AppCompatActivity {
         if (null != data) {
             Uri selectedImage = data.getData();
 
-            Log.i("URI",selectedImage.toString());
+            //Log.i("URI",selectedImage.toString());
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
             Cursor cursor = getContentResolver().query(selectedImage,
@@ -177,10 +168,8 @@ public class NewNotes extends AppCompatActivity {
 
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             imagePath = cursor.getString(columnIndex);
-            Log.i("PATH",imagePath);
             cursor.close();
             content.insertImage(imagePath);
-
         }
 
     }
