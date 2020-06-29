@@ -1,11 +1,9 @@
-package com.homework.notes;
+package com.homework.notes.presentation.main.tabpage.classpage;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -23,11 +20,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.homework.notes.R;
+import com.homework.notes.persistence.ClassDataSource;
+import com.homework.notes.persistence.datastructure.ClassItems;
+import com.homework.notes.persistence.NotesDataSource;
+
 import java.util.ArrayList;
 
 public class ClassFragment extends Fragment {
 
-    private toActivityListener mToActivityListener;
+    private ClasstoActivityListener mToActivityListener;
 
     private Activity mActivity;
 
@@ -42,7 +44,7 @@ public class ClassFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mToActivityListener = (toActivityListener)activity;
+        mToActivityListener = (ClasstoActivityListener)activity;
         mActivity = activity;
     }
 
@@ -74,16 +76,7 @@ public class ClassFragment extends Fragment {
             }
         });
         class_lv.setLongClickable(true);
-        /*
-        class_lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                ImageButton del_class_btn = view.findViewById(R.id.del_class_btn);
-                del_class_btn.setVisibility(View.VISIBLE);
-                return true;
-            }
-        });
-        */
+
         return v;
     }
 
@@ -141,7 +134,7 @@ public class ClassFragment extends Fragment {
         }
     }
 
-    public interface toActivityListener {
+    public interface ClasstoActivityListener {
         void setSelectedClass(String selected_class);
         void resetSelectedNotes(String del_class);
     }
@@ -155,7 +148,7 @@ public class ClassFragment extends Fragment {
                 ClassItems selected_class_item = (ClassItems) class_adapter.getItem(i);
                 final String selected_class_name = selected_class_item.class_name;
                 int selected_class_notes_num = selected_class_item.notes_num;
-                final String msg = "Delete " +selected_class_name+" and "+String.valueOf(selected_class_notes_num)+" notes of it";
+                final String msg = "Delete \"" +selected_class_name+"\" and "+String.valueOf(selected_class_notes_num)+" notes of it";
                 AlertDialog.Builder builder = new AlertDialog.Builder(mActivity).setMessage(msg).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -165,7 +158,9 @@ public class ClassFragment extends Fragment {
 
                         NotesDataSource notes_data_src = new NotesDataSource(mActivity);
                         notes_data_src.deleteByClass(selected_class_name);
-                        Toast.makeText(mActivity,msg+" succeed",Toast.LENGTH_LONG);
+                        Toast t = Toast.makeText(mActivity,msg+" succeed",Toast.LENGTH_LONG);
+                        t.setGravity(Gravity.CENTER,0,800);
+                        t.show();
 
                         mToActivityListener.resetSelectedNotes(selected_class_name);
                     }

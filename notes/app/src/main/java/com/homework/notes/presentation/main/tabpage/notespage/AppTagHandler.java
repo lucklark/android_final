@@ -1,4 +1,4 @@
-package com.homework.notes;
+package com.homework.notes.presentation.main.tabpage.notespage;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.graphics.drawable.Drawable;
+
+import com.homework.notes.R;
 
 import org.xml.sax.XMLReader;
 

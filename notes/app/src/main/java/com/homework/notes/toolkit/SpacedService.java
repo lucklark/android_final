@@ -1,4 +1,4 @@
-package com.homework.notes;
+package com.homework.notes.toolkit;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -11,6 +11,11 @@ import android.os.Handler;
 import android.os.IBinder;
 
 import androidx.core.app.NotificationCompat;
+
+import com.homework.notes.R;
+import com.homework.notes.persistence.datastructure.NoteItems;
+import com.homework.notes.persistence.NotesDataSource;
+import com.homework.notes.presentation.main.tabpage.notespage.AnswerCard;
 
 import java.util.List;
 
@@ -56,7 +61,7 @@ public class SpacedService extends Service {
         NotificationManager notificationManager = (NotificationManager)
                 this.getSystemService(NOTIFICATION_SERVICE);
 
-        Intent intent = new Intent(this,AnswerCard.class);
+        Intent intent = new Intent(this, AnswerCard.class);
         intent.putExtra("title",title);
         intent.putExtra("content",message);
         intent.putExtra("from","notification");

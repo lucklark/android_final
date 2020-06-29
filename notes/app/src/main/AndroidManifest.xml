@@ -11,7 +11,7 @@
         android:requestLegacyExternalStorage="true">
 
         <activity
-            android:name="com.homework.notes.MainActivity"
+            android:name="com.homework.notes.presentation.main.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,9 +20,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.homework.notes.NewNotes"
+            android:name="com.homework.notes.presentation.main.tabpage.notespage.NewNotes"
             android:label="@string/title_activity_new_notes"
-            android:parentActivityName="com.homework.notes.MainActivity"
+            android:parentActivityName="com.homework.notes.presentation.main.MainActivity"
 
             android:windowSoftInputMode="adjustPan">
             <meta-data
@@ -30,30 +30,30 @@
                 android:value=".Notes" />
         </activity>
         <activity
-            android:name="com.homework.notes.AnswerCard"
+            android:name="com.homework.notes.presentation.main.tabpage.notespage.AnswerCard"
             android:label="@string/title_activity_answer_card"
-            android:parentActivityName="com.homework.notes.MainActivity" >
+            android:parentActivityName="com.homework.notes.presentation.main.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Notes" />
         </activity>
         <activity
-            android:name="com.homework.notes.NotesFragment"
+            android:name="com.homework.notes.presentation.main.tabpage.notespage.NotesFragment"
             android:label="NotesFragment"
-            android:parentActivityName="com.homework.notes.MainActivity"
+            android:parentActivityName="com.homework.notes.presentation.main.MainActivity"
             >
 
         </activity>
 
         <service
-            android:name="com.homework.notes.SpacedService"
+            android:name="com.homework.notes.toolkit.SpacedService"
             android:enabled="true"
             android:icon="@drawable/ic_launcher"
             >
         </service>
 
         <receiver
-            android:name="com.homework.notes.MyReceiver"
+            android:name="com.homework.notes.toolkit.MyReceiver"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>

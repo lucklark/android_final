@@ -1,12 +1,14 @@
-package com.homework.notes;
+package com.homework.notes.presentation.main.tabpage.notespage;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableString;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,8 +17,15 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+
+import com.homework.notes.R;
+import com.homework.notes.persistence.ClassDataSource;
+import com.homework.notes.toolkit.SpacedService;
+import com.homework.notes.persistence.datastructure.NoteItems;
+import com.homework.notes.persistence.NotesDataSource;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,10 +33,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static android.content.ContentValues.TAG;
-
 public class NotesFragment extends Fragment {
     private Context mContext;
+    private toActivityListener myToActivityListener;
 
     ArrayList<NoteItems> items;
     NotesAdapter notesAdapter;
@@ -41,6 +49,7 @@ public class NotesFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+        myToActivityListener = (toActivityListener) context;
     }
 
     public static NotesFragment newInstance(String note_class) {
@@ -168,15 +177,41 @@ public class NotesFragment extends Fragment {
         switch (paramMenuItem.getItemId())
         {
             case R.id.delete_item:
-                int i = (int)((AdapterView.AdapterContextMenuInfo)paramMenuItem.getMenuInfo()).id;
-                new NotesDataSource(mContext.getApplicationContext()).deleteOne(((NoteItems)this.items.get(i)).title, ((NoteItems)this.items.get(i)).content);
-                this.items.remove(i);
-                this.notesAdapter.notifyDataSetChanged();
+                final int i = (int)((AdapterView.AdapterContextMenuInfo)paramMenuItem.getMenuInfo()).id;
+                final String note_title = items.get(i).title;
+                final String note_content = items.get(i).content;
+                final String msg = "Delete \"" +note_title+"\" from \""+notes_class+"\"";
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext).setMessage(msg).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new NotesDataSource(mContext.getApplicationContext()).deleteOne(note_title, note_content);
+                        items.remove(i);
+                        notesAdapter.notifyDataSetChanged();
+
+                        Toast t = Toast.makeText(mContext, msg+" succeed",Toast.LENGTH_LONG);
+                        t.setGravity(Gravity.CENTER,0,800);
+                        t.show();
+
+                        new ClassDataSource(mContext.getApplicationContext()).decrementNotesNum(notes_class);
+                        myToActivityListener.deleteNotesInform(notes_class);
+                    }
+                }).setNegativeButton("Return", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.create().show();
+
                 return true;
 
             default:
                 return super.onContextItemSelected(paramMenuItem);
 
         }
+    }
+
+    public interface toActivityListener {
+        void deleteNotesInform(String del_note_class);
     }
 }

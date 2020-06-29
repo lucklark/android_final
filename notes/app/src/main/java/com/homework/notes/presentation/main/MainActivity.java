@@ -1,6 +1,5 @@
-package com.homework.notes;
+package com.homework.notes.presentation.main;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -18,6 +17,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.nfc.Tag;
 import android.os.Bundle;
 
 import android.text.SpannableString;
@@ -30,23 +30,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import com.homework.notes.presentation.main.tabpage.classpage.ClassFragment;
+import com.homework.notes.presentation.main.tabpage.notespage.NewNotes;
+import com.homework.notes.presentation.main.tabpage.notespage.NotesFragment;
+import com.homework.notes.R;
+import com.homework.notes.presentation.main.tabpage.usrpage.UsrFragment;
+import com.homework.notes.persistence.ClassDataSource;
+import com.homework.notes.persistence.SQLiteHelper;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener,ClassFragment.toActivityListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, ClassFragment.ClasstoActivityListener, NotesFragment.toActivityListener {
     private Fragment notes_frag;
     private Fragment class_frag;
     private Fragment usr_frag;
@@ -70,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean doubleBackToExitPressedOnce = false;
 
+    public static final  String TAG = "MainActivity";
+
 
     protected void onCreate(Bundle paramBundle)
     {
@@ -86,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initEvent(); // fragmentation event initialization
 
         setSelected(0);
-        requestAllPower();
 
         requestAllPower();
     }
@@ -202,6 +202,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public void newClassDialog() {
+        View dialog = LayoutInflater.from(this).inflate(R.layout.new_class,(ViewGroup)findViewById(R.id.new_class_dialog));
+        final EditText editText = dialog.findViewById(R.id.new_class_edit_text);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage("New Class Name: ").setView(dialog)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String new_class_name = editText.getText().toString();
+                        ClassDataSource class_data_src = new ClassDataSource(MainActivity.this);
+                        long ret = class_data_src.insertClass(new_class_name);
+
+                        if(ret > 0) {
+                            // get transaction
+                            FragmentManager fm = getSupportFragmentManager();
+                            // begin transaction
+                            ftr = fm.beginTransaction();
+                            hideTransaction(ftr);
+                            ftr.remove(class_frag);
+                            class_frag = new ClassFragment();
+                            ftr.add(R.id.tab_frame, class_frag);
+                            ftr.commit();
+
+                            Toast t = Toast.makeText(MainActivity.this, "Create new class \"" + editText.getText().toString()+"\"", Toast.LENGTH_LONG);
+                            t.setGravity(Gravity.CENTER,0,800);
+                            t.show();
+                        }
+                        else if (ret < 0){
+                            Toast t = Toast.makeText(MainActivity.this, "Class " + editText.getText().toString() + "existed", Toast.LENGTH_LONG);
+                            t.setGravity(Gravity.CENTER,0,800);
+                            t.show();
+                        }
+
+                    }
+                });
+        builder.create().show();
+
+    }
+
     public void onCreateContextMenu(ContextMenu paramContextMenu, View paramView, ContextMenu.ContextMenuInfo paramContextMenuInfo)
     {
         super.onCreateContextMenu(paramContextMenu, paramView, paramContextMenuInfo);
@@ -257,44 +295,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(paramMenuItem);
     }
 
-    public void newClassDialog() {
-        View dialog = LayoutInflater.from(this).inflate(R.layout.new_class,(ViewGroup)findViewById(R.id.new_class_dialog));
-        final EditText editText = dialog.findViewById(R.id.new_class_edit_text);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage("New Class Name: ").setView(dialog)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String new_class_name = editText.getText().toString();
-                        ClassDataSource class_data_src = new ClassDataSource(MainActivity.this);
-                        long ret = class_data_src.insertClass(new_class_name);
-
-                        if(ret > 0) {
-                            // get transaction
-                            FragmentManager fm = getSupportFragmentManager();
-                            // begin transaction
-                            ftr = fm.beginTransaction();
-                            hideTransaction(ftr);
-                            ftr.remove(class_frag);
-                            class_frag = new ClassFragment();
-                            ftr.add(R.id.tab_frame, class_frag);
-                            ftr.commit();
-
-                            Toast t = Toast.makeText(MainActivity.this, "Create new class " + editText.getText().toString(), Toast.LENGTH_LONG);
-                            t.setGravity(Gravity.CENTER,0,800);
-                            t.show();
-                        }
-                        else if (ret < 0){
-                            Toast t = Toast.makeText(MainActivity.this, "Class " + editText.getText().toString() + "existed", Toast.LENGTH_LONG);
-                            t.setGravity(Gravity.CENTER,0,800);
-                            t.show();
-                        }
-
-                    }
-                });
-        builder.create().show();
-
-    }
-
     //权限动态申请
     public void requestAllPower() {
         if (ContextCompat.checkSelfPermission(this,
@@ -346,12 +346,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void resetSelectedNotes(String del_class) {
-        if(selected_class == del_class) {
+        if(selected_class.equals(del_class)) {
             selected_class = DEFAULT_CLASS;
             selected_class_text.setText(selected_class);
             readdNotesFrag();
             setSelected(1);
         }
+    }
+
+    @Override
+    public void deleteNotesInform(String del_note_class) {
+        readdClassFrag();
+        selected_class = del_note_class;
+        setSelected(0);
     }
 
     @Override

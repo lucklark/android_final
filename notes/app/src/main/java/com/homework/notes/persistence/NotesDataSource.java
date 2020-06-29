@@ -1,10 +1,13 @@
-package com.homework.notes;
+package com.homework.notes.persistence;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.homework.notes.persistence.datastructure.NoteItems;
+
 import java.util.ArrayList;
 import java.util.List;
 

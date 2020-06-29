@@ -1,4 +1,4 @@
-package com.homework.notes;
+package com.homework.notes.toolkit;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

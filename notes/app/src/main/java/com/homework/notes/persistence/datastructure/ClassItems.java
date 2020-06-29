@@ -1,4 +1,4 @@
-package com.homework.notes;
+package com.homework.notes.persistence.datastructure;
 
 public class ClassItems {
     public String class_name;

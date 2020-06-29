@@ -1,4 +1,4 @@
-package com.homework.notes;
+package com.homework.notes.presentation.main.tabpage.notespage;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +19,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.text.Html.ImageGetter;
 import android.text.method.LinkMovementMethod;
+
+import com.homework.notes.R;
+import com.homework.notes.persistence.NotesDataSource;
 
 public class AnswerCard extends AppCompatActivity {
     TextView title_tv;

@@ -1,4 +1,4 @@
-package com.homework.notes;
+package com.homework.notes.persistence;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,8 +6,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.homework.notes.persistence.datastructure.ClassItems;
+
 import java.util.ArrayList;
-import java.util.List;
 
 public class ClassDataSource {
 
@@ -60,6 +61,18 @@ public class ClassDataSource {
         this.open();
         String sql = "UPDATE " + SQLiteHelper.TABLE_CLASS +
                 " SET " + SQLiteHelper.COLUMN_NOTES_NUM + "=" + SQLiteHelper.COLUMN_NOTES_NUM + "+1" +
+                " WHERE " + SQLiteHelper.COLUMN_CLASS_NAME + " = '" + class_name+"'";
+
+        database.execSQL(sql);
+        return 0;
+
+    }
+
+    public long decrementNotesNum(String class_name)
+    {
+        this.open();
+        String sql = "UPDATE " + SQLiteHelper.TABLE_CLASS +
+                " SET " + SQLiteHelper.COLUMN_NOTES_NUM + "=" + SQLiteHelper.COLUMN_NOTES_NUM + "-1" +
                 " WHERE " + SQLiteHelper.COLUMN_CLASS_NAME + " = '" + class_name+"'";
 
         database.execSQL(sql);

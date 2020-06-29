@@ -1,4 +1,4 @@
-package com.homework.notes;
+package com.homework.notes.presentation.main.tabpage.notespage;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
@@ -10,11 +10,10 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.SpannableString;
 import android.text.util.Linkify;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,8 +21,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.homework.notes.RichText;
 
+import com.homework.notes.R;
+import com.homework.notes.toolkit.RichText;
+import com.homework.notes.persistence.ClassDataSource;
+import com.homework.notes.persistence.NotesDataSource;
+import com.homework.notes.presentation.main.MainActivity;
 
 
 public class NewNotes extends AppCompatActivity {
@@ -79,8 +82,10 @@ public class NewNotes extends AppCompatActivity {
                         nds.insertNotes(title.getText().toString(),content.getText().toString(),note_class);
                         ClassDataSource cds = new ClassDataSource(getApplicationContext());
                         cds.incrementNotesNum(note_class);
-                        Toast.makeText(getApplicationContext(),"Note Added.",Toast.LENGTH_LONG).show();
-                        Intent i = new Intent(NewNotes.this,MainActivity.class);
+                        Toast t = Toast.makeText(getApplicationContext(),"Note Added.",Toast.LENGTH_LONG);
+                        t.setGravity(Gravity.CENTER,0,800);
+                        t.show();
+                        Intent i = new Intent(NewNotes.this, MainActivity.class);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         i.putExtra("new_note","success");
