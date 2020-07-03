@@ -337,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void setSelectedClass(String selected_class) {
-        if(selected_class != this.selected_class) {
+        if(!selected_class.equals(this.selected_class)) {
             this.selected_class = selected_class;
             readdNotesFrag();
         }
