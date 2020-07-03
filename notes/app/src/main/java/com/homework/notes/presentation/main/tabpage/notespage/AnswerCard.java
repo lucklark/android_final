@@ -21,11 +21,16 @@ import android.text.Html.ImageGetter;
 import android.text.method.LinkMovementMethod;
 
 import com.homework.notes.R;
+import com.homework.notes.persistence.ClassDataSource;
 import com.homework.notes.persistence.NotesDataSource;
 
 public class AnswerCard extends AppCompatActivity {
     TextView title_tv;
     TextView content_tv;
+
+    String content;
+    String title;
+    String class_name;
 
     private boolean doubleBackToExitPressedOnce = false;
     @Override
@@ -41,12 +46,14 @@ public class AnswerCard extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        String title = intent.getStringExtra("title");
-        String content = intent.getStringExtra("content");
+        title = intent.getStringExtra("title");
+        content = intent.getStringExtra("content");
+        class_name = intent.getStringExtra("class_name");
         String from = intent.getStringExtra("from");
 
         NotesDataSource nds = new NotesDataSource(this);
         nds.modifyLastSeen(content);
+
         title_tv = (TextView) findViewById(R.id.title_answercard);
         content_tv = (TextView) findViewById(R.id.content_answercard);
 
@@ -118,4 +125,15 @@ public class AnswerCard extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // ADD: modify review time when stop review
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        NotesDataSource nds = new NotesDataSource(this);
+        long incre_review_time = nds.modifyTotalReviewTime(content);
+
+        ClassDataSource cds = new ClassDataSource(this);
+        cds.updateClassReviewTime(incre_review_time, class_name);
+    }
 }

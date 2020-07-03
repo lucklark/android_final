@@ -27,6 +27,7 @@ import com.homework.notes.toolkit.SpacedService;
 import com.homework.notes.persistence.datastructure.NoteItems;
 import com.homework.notes.persistence.NotesDataSource;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -98,6 +99,7 @@ public class NotesFragment extends Fragment {
                 localIntent.putExtra("title", ((NoteItems)items_t.get(paramAnonymousInt - 1)).title);
                 localIntent.putExtra("content", ((NoteItems)items_t.get(paramAnonymousInt - 1)).content);
                 localIntent.putExtra("from", "app");
+                localIntent.putExtra("class_name", notes_class);
                 mContext.startActivity(localIntent);
             }
         });
@@ -155,9 +157,13 @@ public class NotesFragment extends Fragment {
             TextView localTextView1 = (TextView)paramView.findViewById(R.id.title);
             TextView localTextView2 = (TextView)paramView.findViewById(R.id.last_reviewed);
             TextView localTextView3 = (TextView)paramView.findViewById(R.id.total_reviews);
+            TextView localTextView4 = (TextView)paramView.findViewById(R.id.total_review_time);
+
             localTextView1.setTypeface(localTypeface);
             localTextView2.setTypeface(localTypeface);
             localTextView3.setTypeface(localTypeface);
+            localTextView4.setTypeface(localTypeface);
+
             NoteItems localNoteItems = (NoteItems)this.items.get(paramInt);
             localTextView1.setText(localNoteItems.title);
             long l1 = Long.valueOf(localNoteItems.last_reviewed).longValue();
@@ -166,8 +172,16 @@ public class NotesFragment extends Fragment {
             arrayOfObject[0] = Long.valueOf(TimeUnit.MILLISECONDS.toMinutes(l2));
             arrayOfObject[1] = Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(l2) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(l2)));
             String str = String.format("%d min, %d sec", arrayOfObject);
+
+            long review_time = Long.valueOf(localNoteItems.total_review_time).longValue();
+            Object[] review_time_min_s = new Object[2];
+            review_time_min_s[0] = Long.valueOf(TimeUnit.MILLISECONDS.toMinutes(review_time));
+            review_time_min_s[1] = Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(review_time))-Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(Long.valueOf(TimeUnit.MILLISECONDS.toMinutes(review_time))));
+            String review_time_str = String.format("%d min, %d sec", review_time_min_s);
+
             localTextView2.setText("Last seen: " + str + " ago");
             localTextView3.setText("Notification sent: " + localNoteItems.total_reviews + " times");
+            localTextView4.setText("Total review: " + review_time_str);
             return paramView;
         }
     }

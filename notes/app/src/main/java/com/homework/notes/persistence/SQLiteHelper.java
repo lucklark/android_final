@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
-    public static final String TABLE_NOTES = "notes2";
+    public static final String TABLE_NOTES = "notes5";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_LAST_REVIEWED = "last_reviewed";
@@ -16,13 +16,17 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CONTENT = "content";
     // ADD: note class
     public static final String COLUMN_NOTE_CLASS = "note_class";
+    // ADD: total review time
+    public static final String COLUMN_TOTAL_REVIEW_TIME = "total_review_time";
 
     // ADD: class table
-    public static final String TABLE_CLASS = "class_table";
+    public static final String TABLE_CLASS = "class_table5";
     public static final String COLUMN_CLASS_ID = "_id";
     public static final String COLUMN_CLASS_NAME = "class_name";
     public static final String COLUMN_NOTES_NUM = "notes_num";
     public static final String COLUMN_CLASS_ORDER = "class_order";
+    // ADD: class review time
+    public static final String COLUMN_CLASS_REVIEW_TIME = "class_review_time";
 
     private static final String DATABASE_NAME = "notes.db";
     private static final int DATABASE_VERSION = 1;
@@ -44,6 +48,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 COLUMN_TITLE + " TEXT NOT NULL, " +
                 COLUMN_LAST_REVIEWED + " TEXT NOT NULL, " +
                 COLUMN_TOTAL_REVIEWS + " INT NOT NULL, " +
+                COLUMN_TOTAL_REVIEW_TIME + " TEXT NOT NULL, " +
                 COLUMN_CONTENT + " TEXT NOT NULL, " +
                 COLUMN_NOTE_CLASS + " TEXT NOT NULL);"
         );
@@ -52,6 +57,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 COLUMN_CLASS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_CLASS_NAME + " TEXT NOT NULL, " +
                 COLUMN_NOTES_NUM + " INTEGER, " +
+                COLUMN_CLASS_REVIEW_TIME + " TEXT NOT NULL, " +
                 COLUMN_CLASS_ORDER + " INTEGER);"
         );
     }
@@ -71,6 +77,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 COLUMN_TITLE + " TEXT NOT NULL, " +
                 COLUMN_LAST_REVIEWED + " TEXT NOT NULL, " +
                 COLUMN_TOTAL_REVIEWS + " INT NOT NULL, " +
+                COLUMN_TOTAL_REVIEW_TIME + " TEXT NOT NULL, " +
                 COLUMN_CONTENT + " TEXT NOT NULL, " +
                 COLUMN_NOTE_CLASS + " TEXT NOT NULL);"
         );
@@ -79,6 +86,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 COLUMN_CLASS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_CLASS_NAME + " TEXT NOT NULL, " +
                 COLUMN_NOTES_NUM + " INTEGER, " +
+                COLUMN_CLASS_REVIEW_TIME + " TEXT NOT NULL, " +
                 COLUMN_CLASS_ORDER + " INTEGER);"
         );
     }

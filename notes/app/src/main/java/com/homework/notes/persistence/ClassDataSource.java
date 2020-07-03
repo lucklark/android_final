@@ -33,7 +33,7 @@ public class ClassDataSource {
     public long insertClass(String class_name)
     {
         this.open();
-        Cursor cursor = database.rawQuery("select * from class_table where class_name = ?",new String[]{class_name});
+        Cursor cursor = database.rawQuery("select * from " + SQLiteHelper.TABLE_CLASS + " where " + SQLiteHelper.COLUMN_CLASS_NAME + " = ?",new String[]{class_name});
         // unique class_name
         if(cursor.getCount() > 0) {
             this.close();
@@ -42,9 +42,11 @@ public class ClassDataSource {
 
         ContentValues insertValues = new ContentValues();
         insertValues.put(SQLiteHelper.COLUMN_CLASS_NAME, class_name);
-        int class_order = database.rawQuery("select * from class_table",null).getCount();
+        int class_order = database.rawQuery("select * from "+SQLiteHelper.TABLE_CLASS,null).getCount();
         insertValues.put(SQLiteHelper.COLUMN_CLASS_ORDER, class_order);
         insertValues.put(SQLiteHelper.COLUMN_NOTES_NUM, 0);
+        // ADD: class review time
+        insertValues.put(SQLiteHelper.COLUMN_CLASS_REVIEW_TIME, 0);
         long val = database.insert(SQLiteHelper.TABLE_CLASS, null, insertValues);
         this.close();
         return val;
@@ -64,6 +66,7 @@ public class ClassDataSource {
                 " WHERE " + SQLiteHelper.COLUMN_CLASS_NAME + " = '" + class_name+"'";
 
         database.execSQL(sql);
+        this.close();
         return 0;
 
     }
@@ -76,22 +79,36 @@ public class ClassDataSource {
                 " WHERE " + SQLiteHelper.COLUMN_CLASS_NAME + " = '" + class_name+"'";
 
         database.execSQL(sql);
+        this.close();
         return 0;
 
+    }
+
+    public void updateClassReviewTime(long incre_review_time, String class_name) {
+        this.open();
+
+        String sql = "UPDATE " + SQLiteHelper.TABLE_CLASS +
+                " SET " + SQLiteHelper.COLUMN_CLASS_REVIEW_TIME + "=" + SQLiteHelper.COLUMN_CLASS_REVIEW_TIME + "+" + incre_review_time +
+                " WHERE " + SQLiteHelper.COLUMN_CLASS_NAME + " = '" + class_name+"'";
+
+        database.execSQL(sql);
+
+        this.close();
     }
 
     public ArrayList<ClassItems> getAllClass() {
         this.open();
         ArrayList<ClassItems> items = new ArrayList<ClassItems>();
-        Cursor cursor = database.rawQuery("select * from class_table order by class_order asc",null);
+        Cursor cursor = database.rawQuery("select * from "+SQLiteHelper.TABLE_CLASS+" order by class_order asc",null);
 
         if (cursor .moveToFirst()) {
 
             while (!cursor.isAfterLast()) {
                 String class_name = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_CLASS_NAME));
                 int notes_num = cursor.getInt(cursor.getColumnIndex(SQLiteHelper.COLUMN_NOTES_NUM));
-
-                ClassItems item = new ClassItems(class_name,notes_num);
+                // ADD: class review time
+                String class_review_time = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_CLASS_REVIEW_TIME));
+                ClassItems item = new ClassItems(class_name,notes_num,class_review_time);
                 items.add(item);
                 cursor.moveToNext();
             }
