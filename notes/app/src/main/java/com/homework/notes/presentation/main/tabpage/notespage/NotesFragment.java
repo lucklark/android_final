@@ -96,6 +96,7 @@ public class NotesFragment extends Fragment {
             public void onItemClick(AdapterView<?> paramAnonymousAdapterView, View paramAnonymousView, int paramAnonymousInt, long paramAnonymousLong)
             {
                 Intent localIntent = new Intent(mContext, AnswerCard.class);
+                localIntent.putExtra("id",String.valueOf(((NoteItems)items_t.get(paramAnonymousInt - 1)).id));
                 localIntent.putExtra("title", ((NoteItems)items_t.get(paramAnonymousInt - 1)).title);
                 localIntent.putExtra("content", ((NoteItems)items_t.get(paramAnonymousInt - 1)).content);
                 localIntent.putExtra("from", "app");
@@ -176,7 +177,7 @@ public class NotesFragment extends Fragment {
             long review_time = Long.valueOf(localNoteItems.total_review_time).longValue();
             Object[] review_time_min_s = new Object[2];
             review_time_min_s[0] = Long.valueOf(TimeUnit.MILLISECONDS.toMinutes(review_time));
-            review_time_min_s[1] = Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(review_time))-Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(Long.valueOf(TimeUnit.MILLISECONDS.toMinutes(review_time))));
+            review_time_min_s[1] = Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(review_time)) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(review_time));
             String review_time_str = String.format("%d min, %d sec", review_time_min_s);
 
             localTextView2.setText("Last seen: " + str + " ago");
@@ -192,13 +193,14 @@ public class NotesFragment extends Fragment {
         {
             case R.id.delete_item:
                 final int i = (int)((AdapterView.AdapterContextMenuInfo)paramMenuItem.getMenuInfo()).id;
+                final long id = items.get(i).id;
                 final String note_title = items.get(i).title;
                 final String note_content = items.get(i).content;
                 final String msg = "Delete \"" +note_title+"\" from \""+notes_class+"\"";
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext).setMessage(msg).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new NotesDataSource(mContext.getApplicationContext()).deleteOne(note_title, note_content);
+                        new NotesDataSource(mContext.getApplicationContext()).deleteOne(id);
                         items.remove(i);
                         notesAdapter.notifyDataSetChanged();
 

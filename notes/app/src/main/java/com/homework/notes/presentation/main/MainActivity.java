@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int selected_tab;
     private String selected_class;
 
-    final static String DEFAULT_CLASS = "default";
+    static String DEFAULT_CLASS = "default";
+    final static String DEFAULT_CLASS_NAME = "default";
 
     private boolean doubleBackToExitPressedOnce = false;
 
@@ -80,13 +81,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initDatabase();
 
-        selected_class = DEFAULT_CLASS;
-
         initView(); // view initialization(v1)
 
         initEvent(); // fragmentation event initialization
 
-        setSelected(0);
+        setSelected(1);
+        selected_class = DEFAULT_CLASS;
 
         requestAllPower();
     }
@@ -317,7 +317,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // begin transaction
         ftr = fm.beginTransaction();
         hideTransaction(ftr);
-        ftr.remove(notes_frag);
+        if(notes_frag != null) {
+            ftr.remove(notes_frag);
+        }
         notes_frag = NotesFragment.newInstance(selected_class);
         ftr.add(R.id.tab_frame, notes_frag);
         ftr.commit();
@@ -329,7 +331,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // begin transaction
         ftr = fm.beginTransaction();
         hideTransaction(ftr);
-        ftr.remove(class_frag);
+        if(class_frag != null) {
+            ftr.remove(class_frag);
+        }
         class_frag = new ClassFragment();
         ftr.add(R.id.tab_frame, class_frag);
         ftr.commit();
@@ -352,6 +356,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             readdNotesFrag();
             setSelected(1);
         }
+    }
+
+    public void setDefaultClass(String first_class) {
+        DEFAULT_CLASS = first_class;
     }
 
     @Override

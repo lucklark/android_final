@@ -49,11 +49,10 @@ public class NotesDataSource {
         return val;
     }
 
-    public long deleteOne(String title, String content)
+    public long deleteOne(long id)
     {
-        content = HtmltoString(content);
         this.open();
-        database.delete(SQLiteHelper.TABLE_NOTES, SQLiteHelper.COLUMN_CONTENT + " = ?", new String[] { String.valueOf(content) });
+        database.delete(SQLiteHelper.TABLE_NOTES, SQLiteHelper.COLUMN_ID + " = ?", new String[] { String.valueOf(id) });
         this.close();
         return 0;
     }
@@ -66,13 +65,12 @@ public class NotesDataSource {
         return 0;
     }
 
-    public long incrementTotalReviews(String content)
+    public long incrementTotalReviews(long id)
     {
-        content = HtmltoString(content);
         this.open();
         String sql = "UPDATE " + SQLiteHelper.TABLE_NOTES +
                 " SET " + SQLiteHelper.COLUMN_TOTAL_REVIEWS + "=" + SQLiteHelper.COLUMN_TOTAL_REVIEWS + "+1" +
-                " WHERE " + SQLiteHelper.COLUMN_CONTENT + " >= '" + content+"'";
+                " WHERE " + SQLiteHelper.COLUMN_ID + " = " + id;
 
         database.execSQL(sql);
         /*database.execSQL("UPDATE " + SQLiteHelper.TABLE_NOTES + " SET "
@@ -83,30 +81,25 @@ public class NotesDataSource {
 
     }
 
-    public long modifyLastSeen(String content)
+    public long modifyLastSeen(long id)
     {
-        content = HtmltoString(content);
         this.open();
         String sql = "UPDATE " + SQLiteHelper.TABLE_NOTES +
                 " SET " + SQLiteHelper.COLUMN_LAST_REVIEWED + "=" + System.currentTimeMillis()+
-                " WHERE " + SQLiteHelper.COLUMN_CONTENT + " >= '" + content+"'";
+                " WHERE " + SQLiteHelper.COLUMN_ID + " = " + id;
 
         database.execSQL(sql);
-        /*database.execSQL("UPDATE " + SQLiteHelper.TABLE_NOTES + " SET "
-                + SQLiteHelper.COLUMN_TOTAL_REVIEWS + " = " + SQLiteHelper.COLUMN_TOTAL_REVIEWS + " +1 WHERE "
-                + SQLiteHelper.COLUMN_CONTENT + " = " +content);*/
         this.close();
         return 0;
 
     }
 
     // ADD: modify total review time
-    public long modifyTotalReviewTime(String content)
+    public long modifyTotalReviewTime(long id)
     {
-        content = HtmltoString(content);
         this.open();
         ArrayList<String> items = new ArrayList<String>();
-        Cursor cursor = database.rawQuery("select * from " + SQLiteHelper.TABLE_NOTES + " where "+SQLiteHelper.COLUMN_CONTENT + " >= ?",new String[]{content});
+        Cursor cursor = database.rawQuery("select * from " + SQLiteHelper.TABLE_NOTES + " where "+SQLiteHelper.COLUMN_ID + " = ?",new String[]{String.valueOf(id)});
 
         if (cursor .moveToFirst()) {
 
@@ -119,19 +112,22 @@ public class NotesDataSource {
                 cursor.moveToNext();
             }
         }
+
+        if(items.isEmpty()) {
+            this.close();
+            return 0;
+        }
+
         long incre_review_time = System.currentTimeMillis() - Long.valueOf(items.get(0));
         long new_review_time = Long.valueOf(items.get(1)) + incre_review_time;
         String sql = "UPDATE " + SQLiteHelper.TABLE_NOTES +
                 " SET " + SQLiteHelper.COLUMN_TOTAL_REVIEW_TIME + "=" + new_review_time +
-                " WHERE " + SQLiteHelper.COLUMN_CONTENT + " >= '" + content+"'";
+                " WHERE " + SQLiteHelper.COLUMN_ID + " = " + id;
 
         database.execSQL(sql);
-        /*database.execSQL("UPDATE " + SQLiteHelper.TABLE_NOTES + " SET "
-                + SQLiteHelper.COLUMN_TOTAL_REVIEWS + " = " + SQLiteHelper.COLUMN_TOTAL_REVIEWS + " +1 WHERE "
-                + SQLiteHelper.COLUMN_CONTENT + " = " +content);*/
+
         this.close();
         return incre_review_time;
-
     }
 
     public ArrayList<NoteItems> getAllNotes() {
@@ -142,6 +138,7 @@ public class NotesDataSource {
         if (cursor .moveToFirst()) {
 
             while (!cursor.isAfterLast()) {
+                String id = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_ID));
                 String title = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TITLE));
                 String last_reviewed = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_LAST_REVIEWED));
                 String total_reviews = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TOTAL_REVIEWS));
@@ -150,7 +147,7 @@ public class NotesDataSource {
                 String note_class = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_NOTE_CLASS));
                 // ADD: total review time
                 String total_review_time = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TOTAL_REVIEW_TIME));
-                NoteItems item = new NoteItems(title,last_reviewed,total_reviews, total_review_time,content,note_class);
+                NoteItems item = new NoteItems(Long.valueOf(id), title,last_reviewed,total_reviews, total_review_time,content,note_class);
                 items.add(item);
                 cursor.moveToNext();
             }
@@ -167,6 +164,7 @@ public class NotesDataSource {
         if (cursor .moveToFirst()) {
 
             while (!cursor.isAfterLast()) {
+                String id = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_ID));
                 String title = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TITLE));
                 String last_reviewed = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_LAST_REVIEWED));
                 String total_reviews = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TOTAL_REVIEWS));
@@ -174,7 +172,7 @@ public class NotesDataSource {
                 content = StringtoHtml(content);
                 // ADD: total review time
                 String total_review_time = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TOTAL_REVIEW_TIME));
-                NoteItems item = new NoteItems(title,last_reviewed,total_reviews,total_review_time,content,note_class);
+                NoteItems item = new NoteItems(Long.valueOf(id),title,last_reviewed,total_reviews,total_review_time,content,note_class);
                 items.add(item);
                 cursor.moveToNext();
             }
@@ -191,6 +189,7 @@ public class NotesDataSource {
         if (cursor .moveToFirst()) {
 
             while (!cursor.isAfterLast()) {
+                String id = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_ID));
                 String title = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TITLE));
                 String last_reviewed = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_LAST_REVIEWED));
                 String total_reviews = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TOTAL_REVIEWS));
@@ -199,7 +198,7 @@ public class NotesDataSource {
                 String note_class = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_NOTE_CLASS));
                 // ADD: total review time
                 String total_review_time = cursor.getString(cursor.getColumnIndex(SQLiteHelper.COLUMN_TOTAL_REVIEW_TIME));
-                NoteItems item = new NoteItems(title,last_reviewed,total_reviews,total_review_time,content,note_class);
+                NoteItems item = new NoteItems(Long.valueOf(id),title,last_reviewed,total_reviews,total_review_time,content,note_class);
                 long past_epoch = Long.valueOf(item.last_reviewed);
                 long current_epoch = System.currentTimeMillis();
                 long difference = current_epoch - past_epoch;

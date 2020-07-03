@@ -35,7 +35,7 @@ public class SpacedService extends Service {
                 for(NoteItems item : items)
                 {
                     SpacedService.this.notification(item.title,item.content);
-                    nds.incrementTotalReviews(item.content);
+                    nds.incrementTotalReviews(item.id);
                 }
                 handler.postDelayed(this, 120000/2); //now is every 2 minutes
             }

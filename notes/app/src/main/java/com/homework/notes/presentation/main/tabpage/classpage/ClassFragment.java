@@ -61,9 +61,14 @@ public class ClassFragment extends Fragment {
         class_lv = v.findViewById(R.id.class_lv);
 
         class_data_src = new ClassDataSource(getContext());
-        class_data_src.insertClass(DEFAULT_CLASS);
+        if(class_data_src.getAllClass().isEmpty()){
+            class_data_src.insertClass(DEFAULT_CLASS);
+        }
 
-        class_adapter = new ClassAdapter(class_data_src.getAllClass());
+        ArrayList<ClassItems> items = class_data_src.getAllClass();
+        mToActivityListener.setDefaultClass(items.get(0).class_name);
+
+        class_adapter = new ClassAdapter(items);
 
         class_lv.setAdapter(class_adapter);
 
@@ -102,6 +107,10 @@ public class ClassFragment extends Fragment {
             return paramInt;
         }
 
+        public boolean isEmpty() {
+            return class_data_list.isEmpty();
+        }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ClassItems class_item = (ClassItems) getItem(position);
@@ -137,6 +146,7 @@ public class ClassFragment extends Fragment {
     public interface ClasstoActivityListener {
         void setSelectedClass(String selected_class);
         void resetSelectedNotes(String del_class);
+        void setDefaultClass(String first_class);
     }
 
     public boolean onContextItemSelected(MenuItem paramMenuItem)
@@ -154,14 +164,20 @@ public class ClassFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         class_data_src.deleteOne(selected_class_name);
                         class_adapter.remove(i);
-                        class_adapter.notifyDataSetChanged();
+                        if(class_adapter.isEmpty()) {
+                            class_data_src.insertClass(DEFAULT_CLASS);
+                        }
+                        ArrayList<ClassItems> items = class_data_src.getAllClass();
+                        class_adapter.update(items);
 
                         NotesDataSource notes_data_src = new NotesDataSource(mActivity);
                         notes_data_src.deleteByClass(selected_class_name);
                         Toast t = Toast.makeText(mActivity,msg+" succeed",Toast.LENGTH_LONG);
                         t.setGravity(Gravity.CENTER,0,800);
                         t.show();
-
+                        if(i == 0) {
+                            mToActivityListener.setDefaultClass(items.get(0).class_name);
+                        }
                         mToActivityListener.resetSelectedNotes(selected_class_name);
                     }
                 }).setNegativeButton("Return", new DialogInterface.OnClickListener(){

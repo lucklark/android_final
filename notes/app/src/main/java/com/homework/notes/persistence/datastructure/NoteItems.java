@@ -13,8 +13,9 @@ public class NoteItems
     public String content;
     public String note_class;
 
-    public NoteItems(String title, String last_reviewed, String total_reviews, String total_review_time,String content, String note_class)
+    public NoteItems(long id, String title, String last_reviewed, String total_reviews, String total_review_time,String content, String note_class)
     {
+        this.id = id;
         this.title = title;
         this.last_reviewed = last_reviewed;
         this.total_reviews = total_reviews;

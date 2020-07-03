@@ -28,6 +28,7 @@ public class AnswerCard extends AppCompatActivity {
     TextView title_tv;
     TextView content_tv;
 
+    long id;
     String content;
     String title;
     String class_name;
@@ -46,13 +47,14 @@ public class AnswerCard extends AppCompatActivity {
 
 
         Intent intent = getIntent();
+        id = Long.valueOf(intent.getStringExtra("id"));
         title = intent.getStringExtra("title");
         content = intent.getStringExtra("content");
         class_name = intent.getStringExtra("class_name");
         String from = intent.getStringExtra("from");
 
         NotesDataSource nds = new NotesDataSource(this);
-        nds.modifyLastSeen(content);
+        nds.modifyLastSeen(id);
 
         title_tv = (TextView) findViewById(R.id.title_answercard);
         content_tv = (TextView) findViewById(R.id.content_answercard);
@@ -131,9 +133,10 @@ public class AnswerCard extends AppCompatActivity {
         super.onStop();
 
         NotesDataSource nds = new NotesDataSource(this);
-        long incre_review_time = nds.modifyTotalReviewTime(content);
-
-        ClassDataSource cds = new ClassDataSource(this);
-        cds.updateClassReviewTime(incre_review_time, class_name);
+        long incre_review_time = nds.modifyTotalReviewTime(id);
+        if(incre_review_time > 0) {
+            ClassDataSource cds = new ClassDataSource(this);
+            cds.updateClassReviewTime(incre_review_time, class_name);
+        }
     }
 }
