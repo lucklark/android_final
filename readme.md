@@ -2,7 +2,7 @@
 
 ## 成员信息
 
-李赛尉
+李赛尉 17343062
 
 李秀祥
 
@@ -176,7 +176,7 @@
 
 
 
-#### AnswerCard.java
+### AnswerCard.java
 
 实现对于note详情页面的显示。相关函数包括：
 
@@ -187,7 +187,7 @@
 
 
 
-#### AppTagHandler.java
+### AppTagHandler.java
 
 继承于Html.TagHandler，为了将图片对应html标签解析并且显示在popWindow上来进行放大查看。相关函数包括：
 
@@ -197,7 +197,7 @@
 
 
 
-#### NewNotes.java
+### NewNotes.java
 
 对于新note的创建。相关函数包括：
 
@@ -208,7 +208,7 @@
 
 
 
-#### SpacedService.java
+### SpacedService.java
 
 主要是为了实现对于note的定时提醒通知功能。相关函数包括：
 
