@@ -67,6 +67,7 @@ public class ClassFragment extends Fragment {
 
         ArrayList<ClassItems> items = class_data_src.getAllClass();
         mToActivityListener.setDefaultClass(items.get(0).class_name);
+        mToActivityListener.resetSelectedNotes(DEFAULT_CLASS);
 
         class_adapter = new ClassAdapter(items);
 

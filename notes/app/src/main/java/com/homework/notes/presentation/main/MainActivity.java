@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FragmentTransaction ftr;
 
     private int selected_tab;
-    private String selected_class;
+    private String selected_class = DEFAULT_CLASS_NAME;
 
     static String DEFAULT_CLASS = "default";
     final static String DEFAULT_CLASS_NAME = "default";

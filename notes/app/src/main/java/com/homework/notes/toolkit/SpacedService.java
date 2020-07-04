@@ -34,12 +34,12 @@ public class SpacedService extends Service {
                 List<NoteItems> items = nds.getAllNotesForNotification();
                 for(NoteItems item : items)
                 {
-                    SpacedService.this.notification(item.title,item.content);
+                    SpacedService.this.notification(item.id,item.title,item.content,item.note_class);
                     nds.incrementTotalReviews(item.id);
                 }
-                handler.postDelayed(this, 120000/2); //now is every 2 minutes
+                handler.postDelayed(this, 60000);//每分钟检测一次
             }
-        }, 120000/2);
+        }, 60000);
 
 
 
@@ -47,13 +47,12 @@ public class SpacedService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("Not implemented");
     }
 
-    public void notification(String title, String message)
+    public void notification(long _id,String title, String message, String class_name)
     {
-        int random = 1 + (int)(Math.random() * ((100 - 1) + 1)); // generates random number from 1 to 100
+        int random = 1 + (int)(Math.random() * ((100 - 1) + 1));
         int num = message.hashCode();
 
         String id = "channel";
@@ -62,11 +61,12 @@ public class SpacedService extends Service {
                 this.getSystemService(NOTIFICATION_SERVICE);
 
         Intent intent = new Intent(this, AnswerCard.class);
+        intent.putExtra("id",String.valueOf(_id));
         intent.putExtra("title",title);
+        intent.putExtra("class_name", class_name);
         intent.putExtra("content",message);
         intent.putExtra("from","notification");
         PendingIntent i=PendingIntent.getActivity(this, random,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-
 
         Notification notification = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//判断API

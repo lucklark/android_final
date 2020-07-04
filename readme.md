@@ -173,3 +173,47 @@
 - `getAllNotes()`: 取得所有笔记数据；
 - `getNotesOfClass(String)`: 取得某类别的所有笔记数据；
 - `getAllNotesForNotification()`: 取得所有需要复习的笔记。
+
+
+
+#### AnswerCard.java
+
+实现对于note详情页面的显示。相关函数包括：
+
+- `onCreate(Bundle)`:设置标题背景，同时通过Intent接受从notesFragment传来的笔记title、context等信息。之后通过重写`ImageGetter`函数对于context的文字以及图片进行转化设置到textView上。同时设定其`AppTagHandler`来为之后点击图片效果做准备。
+- `onCreateOptionsMenu(Menu)`:创建appbar上菜单项。
+- `onOptionsItemSelected(MenuItem)`:菜单点击事件处理。
+- `onStop()`:重写`onStop`方法，为了实现对于进入详情对于note累计复习时间的确定，并在退出时更新对应数据库项。
+
+
+
+#### AppTagHandler.java
+
+继承于Html.TagHandler，为了将图片对应html标签解析并且显示在popWindow上来进行放大查看。相关函数包括：
+
+- `AppTagHandler(Context)`:对于popWindow进行相关定义，同时设置其点击事件为点击后消失。
+- `handleTag(boolean,String,Editable,XMLReader)`:解析标签img的图片
+- 内部类`ClickableImage`继承于`ClickableSpan`，用于设置图片的点击事件以及相应操作。
+
+
+
+#### NewNotes.java
+
+对于新note的创建。相关函数包括：
+
+- `onCreate(Bundle)`:设置actionbar以及下方的EditText输入标题栏以及RichText输入内容框。同时对于开始记忆按钮相关样式以及点击事件进行设置。
+- `onCreateOptionsMenu(Menu)`:创建actionbar上菜单项，包括about以及图片上传的icon。
+- `onOptionsItemSelected(MenuItem)`:菜单点击事件处理。
+- `onActivityResult(int, int, Intent)`:处理从MediaStore获取的图片信息并传入RichText中的`insertImage`函数中对于其插入结果进行显示。
+
+
+
+#### SpacedService.java
+
+主要是为了实现对于note的定时提醒通知功能。相关函数包括：
+
+- `onCreate()`：创建`hander`且通过`postDelayed`来实现定时对于符合条件的需要通知的note进行通知来及时进行记忆，其周期为一分钟。
+- `notification(long,String,String,String)`:对于API版本高于26的，先对于`NotificationChannel`进行设置，然后在`notificationManager`中对于其渠道进行创建，然后对于通知`notification`的创建以及绑定对应渠道id来进行显示通知；而对于低于API26版本的则直接通过`NotificationCompat.Builder`进行创建即可。
+
+
+
