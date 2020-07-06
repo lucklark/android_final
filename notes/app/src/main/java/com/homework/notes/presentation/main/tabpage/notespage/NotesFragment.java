@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -57,6 +58,7 @@ public class NotesFragment extends Fragment {
         NotesFragment notes_frag = new NotesFragment();
         Bundle bundle = new Bundle();
         bundle.putString("note_class",note_class);
+        Log.d("Notes", note_class);
         notes_frag.setArguments(bundle);
         return notes_frag;
     }
@@ -80,8 +82,7 @@ public class NotesFragment extends Fragment {
         Bundle bundle = getArguments();
         notes_class = bundle.getString("note_class");
         List<NoteItems> items = getDataForListView();
-        if (items.size() != 0)
-        {
+        if (items.size() != 0) {
             tips.setVisibility(View.GONE);
         }
         this.notesAdapter = new NotesAdapter(items);
@@ -109,8 +110,7 @@ public class NotesFragment extends Fragment {
         return v;
     }
 
-    public List<NoteItems> getDataForListView()
-    {
+    public List<NoteItems> getDataForListView() {
         // items = new NotesDataSource(mContext.getApplicationContext()).getAllNotes();
         items = new NotesDataSource(mContext.getApplicationContext()).getNotesOfClass(notes_class);
         // Log.d(TAG, "getDataForListView: "+items.get(0).toString());
@@ -122,8 +122,7 @@ public class NotesFragment extends Fragment {
         return this.items;
     }
 
-    public class NotesAdapter extends BaseAdapter
-    {
+    public class NotesAdapter extends BaseAdapter {
         List<NoteItems> items = null;
 
         public NotesAdapter(List<NoteItems> items)
@@ -146,8 +145,7 @@ public class NotesFragment extends Fragment {
             return paramInt;
         }
 
-        public View getView(int paramInt, View paramView, ViewGroup paramViewGroup)
-        {
+        public View getView(int paramInt, View paramView, ViewGroup paramViewGroup) {
             if (paramView == null)
             {
                 LayoutInflater localLayoutInflater = (LayoutInflater)mContext.getSystemService("layout_inflater");
@@ -187,10 +185,8 @@ public class NotesFragment extends Fragment {
         }
     }
 
-    public boolean onContextItemSelected(MenuItem paramMenuItem)
-    {
-        switch (paramMenuItem.getItemId())
-        {
+    public boolean onContextItemSelected(MenuItem paramMenuItem) {
+        switch (paramMenuItem.getItemId()) {
             case R.id.delete_item:
                 final int i = (int)((AdapterView.AdapterContextMenuInfo)paramMenuItem.getMenuInfo()).id;
                 final long id = items.get(i).id;

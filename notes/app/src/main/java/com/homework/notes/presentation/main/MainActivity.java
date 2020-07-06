@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case 2:
                 if(usr_frag == null) {
-                    usr_frag = new UsrFragment();
+                    usr_frag = UsrFragment.NewInstance(selected_class);
                     ftr.add(R.id.tab_frame, usr_frag);
                 }
                 usr_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_user_solid));
@@ -317,8 +317,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(notes_frag != null) {
             ftr.remove(notes_frag);
         }
+        //这一步用于数据的切换
+        if(usr_frag != null) {
+            ftr.remove(usr_frag);
+        }
+
         notes_frag = NotesFragment.newInstance(selected_class);
+        usr_frag = UsrFragment.NewInstance(selected_class);
         ftr.add(R.id.tab_frame, notes_frag);
+        ftr.add(R.id.tab_frame, usr_frag);
         ftr.commit();
     }
 
