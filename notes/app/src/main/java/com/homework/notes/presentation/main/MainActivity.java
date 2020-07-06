@@ -68,8 +68,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     static String DEFAULT_CLASS = "default";
     final static String DEFAULT_CLASS_NAME = "default";
 
-    private boolean doubleBackToExitPressedOnce = false;
-
     public static final  String TAG = "MainActivity";
 
 
@@ -114,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         selected_class_text = (TextView) findViewById(R.id.current_class);
 
-        //getSupportActionBar().setIcon(new ColorDrawable(getResources().getColor(17170445)));
         getSupportActionBar().setTitle("Notes");
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00b5b5")));
         TextView localTextView = (TextView)findViewById(getResources().getIdentifier("action_bar_title", "id", "android"));

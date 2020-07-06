@@ -74,15 +74,15 @@ public class SpacedService extends Service {
             notificationManager.createNotificationChannel(mChannel);
             notification = new Notification.Builder(this)
                     .setChannelId(id)
-                    .setContentTitle("记录")
-                    .setContentText("您有一项记录 " + title)
+                    .setContentTitle("有内容需要记忆！")
+                    .setContentText("题目为 " + title)
                     .setContentIntent(i)
                     .setWhen(System.currentTimeMillis())
                     .setSmallIcon(R.mipmap.ic_launcher_round).build();
         }else{
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                    .setContentTitle("记录")
-                    .setContentText("您有一项记录")
+                    .setContentTitle("有内容需要记忆！")
+                    .setContentText("题目为 " + title)
                     .setSmallIcon(R.mipmap.ic_launcher_round)
                     .setContentIntent(i)
                     .setWhen(System.currentTimeMillis())

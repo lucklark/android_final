@@ -261,11 +261,11 @@ public class NotesDataSource {
         {
             return true;
         }
-        else if (times == 11 && difference >=60000*60*24*8)
+        else if (times == 12 && difference >=60000*60*24*8)
         {
             return true;
         }
-        else if (times == 11 && difference >=60000*60*24*16)
+        else if (times == 13 && difference >=60000*60*24*16)
         {
             return true;
         }

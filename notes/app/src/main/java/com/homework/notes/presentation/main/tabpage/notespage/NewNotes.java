@@ -40,8 +40,6 @@ public class NewNotes extends AppCompatActivity {
 
     private String note_class;
 
-    private boolean doubleBackToExitPressedOnce = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,10 +51,7 @@ public class NewNotes extends AppCompatActivity {
         getSupportActionBar().setTitle("Add Notes");
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00b5b5")));
         int titleId = getResources().getIdentifier("action_bar_title", "id","android");
-        TextView yourTextView = (TextView) findViewById(titleId);
-        //yourTextView.setTextSize(30);
         Typeface face = Typeface.createFromAsset(getAssets(),"Roboto-Thin.ttf");
-        //yourTextView.setTypeface(face);
 
         // ADD: get note_class from main_activity
         Intent r_intent = getIntent();
@@ -164,9 +159,9 @@ public class NewNotes extends AppCompatActivity {
         if (null != data) {
             Uri selectedImage = data.getData();
 
-            //Log.i("URI",selectedImage.toString());
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
+            //通过Cursor读取图片对应本地地址
             Cursor cursor = getContentResolver().query(selectedImage,
                     filePathColumn, null, null, null);
             cursor.moveToFirst();
@@ -174,6 +169,7 @@ public class NewNotes extends AppCompatActivity {
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             imagePath = cursor.getString(columnIndex);
             cursor.close();
+            //向RichText中插入图片
             content.insertImage(imagePath);
         }
 

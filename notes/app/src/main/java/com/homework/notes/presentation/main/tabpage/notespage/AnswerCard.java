@@ -33,7 +33,6 @@ public class AnswerCard extends AppCompatActivity {
     String title;
     String class_name;
 
-    private boolean doubleBackToExitPressedOnce = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,14 +67,18 @@ public class AnswerCard extends AppCompatActivity {
             public Drawable getDrawable(String source) {
                 Drawable d = null;
                 try {
-                    int id = Integer.parseInt(source);
-                    d = getResources().getDrawable(id);
+                    if(source.length() == 1){
+                        int id = Integer.parseInt(source);
+                        d = getResources().getDrawable(id);
+                    }
+                    else{
+                        d = Drawable.createFromPath(source);
+                        d.setBounds(0,0,d.getIntrinsicWidth(),d.getIntrinsicHeight());
+                    }
+
                 } catch (Exception e) {
-                    d = Drawable.createFromPath(source);
-                    d.setBounds(0,0,d.getIntrinsicWidth(),d.getIntrinsicHeight());
-                    return d;
+                    e.printStackTrace();
                 }
-                d.setBounds(0,0,d.getIntrinsicWidth(),d.getIntrinsicHeight());
                 return d;
             }
         };
@@ -96,9 +99,6 @@ public class AnswerCard extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.about)
         {

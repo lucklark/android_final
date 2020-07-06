@@ -1,11 +1,7 @@
 package com.homework.notes.presentation.main.tabpage.notespage;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;

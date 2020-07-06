@@ -22,14 +22,14 @@ public class RichText extends AppCompatEditText {
     }
 
     public void insertImage(String imagePath){
-        String url = "<img src='" + imagePath + "'/>";
-        final SpannableString s = new SpannableString(url);
-        //Log.i("aa",imagePath);
+        String htmlLabel = "<img src='" + imagePath + "'/>";
+        final SpannableString s = new SpannableString(htmlLabel);
+
         Drawable img = Drawable.createFromPath(imagePath);
-        //Log.i("aa",img.toString());
         img.setBounds(0,0,img.getIntrinsicWidth(),img.getIntrinsicHeight());
+
         ImageSpan span = new ImageSpan(img, ImageSpan.ALIGN_BASELINE);
-        s.setSpan(span,0,url.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        s.setSpan(span,0,htmlLabel.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         append(s);
     }
 }

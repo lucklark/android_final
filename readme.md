@@ -111,7 +111,128 @@ public static NotesFragment newInstance(String note_class) {
 
 
 
-## 功能信息
+### 3.图文本添加以及显示
+
+对于note添加支持文字图片，同时实时显示于EditView中；而详情页显示则通过TextView实现。
+
+#### 图文本添加
+
+首先通过系统MediaStore来提供相册上传图片内容:
+
+```java
+//相册上传
+Intent i = new Intent(
+        Intent.ACTION_PICK,
+        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+startActivityForResult(i, RESULT_LOAD_IMAGE);
+```
+
+然后对于`onActivityResult`进行重写，将传入的图片Uri进行读取并且取得其图片地址:
+
+```java
+Uri selectedImage = data.getData();
+
+String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+//通过Cursor读取图片对应本地地址
+Cursor cursor = getContentResolver().query(selectedImage,
+        filePathColumn, null, null, null);
+cursor.moveToFirst();
+
+int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+imagePath = cursor.getString(columnIndex);
+cursor.close();
+//向RichText中插入图片
+content.insertImage(imagePath);
+```
+
+而对于`RichText`则是通过继承`EditText`，其中`insertImage`函数为了把图片插入到RichText中。
+
+```java
+//为了后续显示将图片地址转为html标签
+String htmlLabel = "<img src='" + imagePath + "'/>";
+final SpannableString s = new SpannableString(htmlLabel);
+
+Drawable img = Drawable.createFromPath(imagePath);
+img.setBounds(0,0,img.getIntrinsicWidth(),img.getIntrinsicHeight());
+//设置图片的Span并且加入到内容中
+ImageSpan span = new ImageSpan(img, ImageSpan.ALIGN_BASELINE);
+s.setSpan(span,0,htmlLabel.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+append(s);
+```
+
+#### 图文本显示
+
+对于在TextView中显示则通过创建一个`ImageGetter`并且重写其中`getDrawable`函数即可:
+
+```java
+@Override
+public Drawable getDrawable(String source) {
+    Drawable d = null;
+    try {
+        if(source.length() == 1){
+          	//文本
+            int id = Integer.parseInt(source);
+            d = getResources().getDrawable(id);
+        }
+        else{
+          	//图片
+            d = Drawable.createFromPath(source);
+            d.setBounds(0,0,d.getIntrinsicWidth(),d.getIntrinsicHeight());
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return d;
+}
+```
+
+当然需要注意的是要把原先的换行符`"\n"`换成`<br>`才行，不然不会识别。
+
+
+
+### 4.通知功能
+
+通过在`SpacedService`中通过`handler`的`postDelayed`来实现定时提示，而具体的时间分布则通过`notificationRequired`函数来进行，根据已提醒次数和一定时间间隔来控制是否加入提醒队列`items`，然后对于其队列中note进行提醒记忆，同时更新对应数据库中通知次数字段。每分钟会进行一次检查有无通知并进行发送。
+
+```java
+handler.postDelayed(new Runnable() {
+    public void run() {
+        NotesDataSource nds = new NotesDataSource(SpacedService.this);
+        List<NoteItems> items = nds.getAllNotesForNotification();
+        for(NoteItems item : items)
+        {
+            SpacedService.this.notification(item.id,
+                                            item.title,
+                                            item.content,
+                                            item.note_class);
+            nds.incrementTotalReviews(item.id);
+        }
+        handler.postDelayed(this, 60000);//每分钟检测一次
+    }
+}, 60000);
+```
+
+而关于通知的建立，对于API版本高于26的，先对于`NotificationChannel`进行设置，然后在`notificationManager`中对于其渠道进行创建，然后对于通知`notification`的创建以及绑定对应渠道id来进行显示通知：
+
+```java
+NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
+notificationManager.createNotificationChannel(mChannel);
+notification = new Notification.Builder(this)
+        .setChannelId(id)
+        .setContentTitle("有内容需要记忆！")
+        .setContentText("题目为 " + title)
+        .setContentIntent(i)
+        .setWhen(System.currentTimeMillis())
+        .setSmallIcon(R.mipmap.ic_launcher_round).build();
+```
+
+而对于低于API26版本的则直接通过`NotificationCompat.Builder`进行创建即可。
+
+
+
+功能信息
 
 （确定APP的所需要实现的功能，此内容将作为检查APP是否功能完善的重要依据）
 
