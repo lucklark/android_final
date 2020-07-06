@@ -12,6 +12,8 @@
 
 （介绍APP的背景，动机等）
 
+学习是一个“学习新知识”加上“温故知新”的过程，对于信息时代学业繁重的大学生而言，我们需要一个便携、智能的“记忆助手”，帮助我们分门别类地记录知识点，在手机上实现随时随地记忆复习；我们需要一个“监督者”或称“记忆教练”，根据复习的间隔时间自动提示我们应该温习某一知识了；我们需要一个“记忆指导”，自动记录和统计我们的复习情况(如复习某一类别(学科)的总时长)，并且提供可视化的图表，帮助我们总结先前的复习状态并且科学地调整接下来的复习计划。
+
 ## 开发环境
 
 - **操作系统**：Windows
@@ -21,26 +23,109 @@
 
 （介绍成员分工情况）
 
-- **罗锐堃**：负责UI设计，主页面编写，Minmax算法编写。
+- **李赛尉**：
+- **李秀祥**：
+- **陆俞因**：负责 Tab 选项卡、类别页的 UI 设计和实现，包括类别相关数据库接口的实现。
 
 ## 重点&难点
 
 （介绍APP实现中的重点、难点等内容）
 
-### 1. AI对战
+### 1. Fragment 间通信
 
-由于我们团队没有实现网络对战，因此需要机器人与玩家进行对战。为此，我们使用MinMax算法与玩家对战。
+由于我们的应用使用 `FrameLayout` 和 `Fragment` 实现 Tab 选项卡，需要进行 `Fragment` 与 `Activity` 之间、`Fragment` 之间的通信。我们通过 `Bundle` 与回调函数两种方式实现通信。
 
-#### MinMax算法
+#### Bundle
 
-（如有必要，可以展开）
+实现 `Activity` 到 `Fragment` 的通信，基本步骤如下：
+
+1. 实现 `Fragment` 的实例化方法，生成 `Bundle`；
+
+```java
+// Fragment
+public static NotesFragment newInstance(String note_class) {
+    NotesFragment notes_frag = new NotesFragment();
+    Bundle bundle = new Bundle();
+    bundle.putString("note_class",note_class);
+    notes_frag.setArguments(bundle);
+    return notes_frag;
+}
+```
+
+2. 在 `Activity` 中调用 `Fragment` 的实例化方法，以传入参数的形式实现通信；
+
+   ```java
+   // MainActivity
+   notes_frag = NotesFragment.newInstance(selected_class);
+   ```
+
+3. 在 `Fragment` 的 `onCreateView` 生命周期解析 `Bundle` 获取通信信息；
+
+   ```java
+   // Fragment
+   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+       ...
+   	Bundle bundle = getArguments();
+       notes_class = bundle.getString("note_class");
+       ...
+   }
+   ```
+
+ #### 回调函数
+
+实现 `Fragment` 到 `Activity` 的通信，基本步骤如下：
+
+1. `Fragment` 声明回调接口；
+
+   ```java
+   // Fragment
+   public interface toActivityListener {
+       void deleteNotesInform(String del_note_class);
+   }
+   ```
+
+2. `Activity` 实现回调接口；
+
+   ```java
+   // Activity
+   @Override
+   public void deleteNotesInform(String del_note_class) {
+       ...
+   }
+   ```
+
+3. `Fragment` 调用回调函数实现到 `Activity` 的通信。
+
+   ```java
+   // Fragment
+   myToActivityListener.deleteNotesInform(notes_class);
+   ```
+
+   
+
+### 2. SQLite 数据库操作
+
+我们的应用涉及较多的数据库操作，包括表内以及跨表的 CRUD (增删改查)，我们通过封装数据库操作相关接口(`persistence/NotesDataSource.java` 和 `persistence/ClassDataSource.java`)简化设计和实现，降低程序的耦合度。
+
+在数据显示方面，我们使用了 `<ListView>` 和 `Adapter`，通过 `Adapter` 更新 UI 的数据显示。
+
+
 
 ## 功能信息
 
 （确定APP的所需要实现的功能，此内容将作为检查APP是否功能完善的重要依据）
 
-1. 实现与AI战斗的3x3井字棋游戏
-2. 实现AI难度可调
+1. 实现 Tab 选项卡，点击 Tab 切换到对应页面(笔记页、类别页、统计页)；
+2. 实现增、删、显示类别和笔记：
+   1. 点击 `ActionBar` 的 `+` 按键添加新类别或新笔记；
+   2. 长按某类别或某笔记时，弹出删除窗口。删除某类别的同时删除该类别的所有笔记，删除某笔记时更新该类别的笔记数；
+   3. 选中某类别时，显示该类别的所有笔记；
+   4. 选中某笔记时，显示该笔记的详情页面；
+3. 实现自动提示用户复习笔记。在经过一定时间后，按照最近一次复习时间排序，依次提示用户复习，点击提示信息，跳转进入该笔记的详情页面；
+4. 实现用户复习笔记情况统计，提供用户友好的统计数据可视化。辅助用户掌握自己的复习情况，并科学地安排接下来的复习计划：
+   1. 在选中某笔记时，进入复习状态，及时更新笔记的最近一次复习时间为当前系统时刻；
+   2. 退出笔记的详情页面时，退出复习状态，更新笔记的复习总时长，同时更新该笔记所属类别的复习总时长；
+   3. 统计页显示统计数据图表。
 
 ## 实现方法
 
@@ -48,29 +133,9 @@
 
 应用执行的主要流程可用下图表示：
 
-![微信截图_20200215111205](C:/Users/DELL/Desktop/android/project/MAD2020_FHW/homework/19214821_罗锐堃/report/微信截图_20200215111205.png)
-
-项目包含2个主要文件：
-
-### MainActivity.java
-
-主页面代码。同时也 implements OnTouchListener，作为棋盘的监听器。主要功能包括：
-
-- **OnCreate() && init()**：绘制出初始UI，为棋盘设置监听器。（难度按钮的触发函数已在xml设定）。
-- **setLevel()**：难度按钮的触发函数，设置level值。
-- **OnTouch()**：棋盘的触发函数，当玩家按在棋盘某处时，传递坐标给棋盘的human_play函数落子，并根据human_play的返回判断是否结束：若已结束，则在文本框中显示结果；若未结束，则传递level给棋盘的ai_play函数，由AI落子。
-
-### Board.java
-
-棋盘代码，继承至View。其维护一个棋盘数组，绘制时根据棋盘数组的情况绘制棋盘。主要功能包括：
-
-- **onDraw()**：绘制棋盘，包括根据当前棋盘数组状况绘制相应的O和X。Activity的初始化和自己继承的invalidate()都会调用该函数。
-- **human_play(float x, float y)**：根据(x, y)，在棋盘数组上落子。调用checkWinner()判断棋局是否结束。
-- **ai_play(int level)**：根据level和当前棋盘数组，调用算法确定落子位置，并在棋盘数组上落子。调用checkWinner()判断棋局是否结束。
-- **minmax(int depth, boolean isMaximizing)**：递归算法。根据当前棋盘数组，确定最优落子方案。
-- **checkWinner()**：根据棋盘数组，判断棋局是否已结束。
 
 
+项目的主要模块介绍如下：
 
 ### MainActivity.java
 
