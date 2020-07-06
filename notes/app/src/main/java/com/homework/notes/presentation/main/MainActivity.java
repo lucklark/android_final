@@ -202,8 +202,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void newClassDialog() {
         View dialog = LayoutInflater.from(this).inflate(R.layout.new_class,(ViewGroup)findViewById(R.id.new_class_dialog));
         final EditText editText = dialog.findViewById(R.id.new_class_edit_text);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage("New Class Name: ").setView(dialog)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage("新的类别名称: ").setView(dialog)
+                .setPositiveButton("好的", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String new_class_name = editText.getText().toString();
@@ -273,14 +273,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Typeface localTypeface = Typeface.createFromAsset(getAssets(), "Roboto-Thin.ttf");
             localTextView1.setTypeface(localTypeface);
             TextView localTextView2 = (TextView)localView.findViewById(R.id.content);
-            SpannableString localSpannableString = new SpannableString("Humans more easily remember or learn items when they are studied a few times spaced over a long time span rather than repeatedly studied in a short span of time\n\n" +
-                    "Just click on the + icon and start adding notes and let the app handle the remembering part for you\n\n" +
-                    "Long press a note to delete it\n\n\n" +
-                    "Warning: Having too many notes at once could lead to multiple notification making this app unusable, limit to few notes at a time to get the most from the app");
-            Linkify.addLinks(localSpannableString, 15);
+            SpannableString localSpannableString = new SpannableString("当你在长时间下间隔几次对于知识复习将会更容易记住知识，而不是短时间内多次记忆\n\n" +
+                    "只需要选择下方中间按钮即对应的类别，之后再点击+号进行添加相应类别下的知识笔记即可\n\n" +
+                    "注意：最好一次只添加单个笔记，而不是快速创建多个，不然会使得该时刻通知过多导致程序出错！");
             localTextView2.setTypeface(localTypeface);
             localTextView2.setText(localSpannableString);
-            localBuilder.setView(localView).setPositiveButton("Ok", new DialogInterface.OnClickListener()
+            localBuilder.setView(localView).setPositiveButton("好的", new DialogInterface.OnClickListener()
             {
                 public void onClick(DialogInterface paramAnonymousDialogInterface, int paramAnonymousInt)
                 {

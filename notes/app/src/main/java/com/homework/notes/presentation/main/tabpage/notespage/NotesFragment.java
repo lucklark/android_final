@@ -1,6 +1,5 @@
 package com.homework.notes.presentation.main.tabpage.notespage;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -66,17 +65,15 @@ public class NotesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_notes,container,false);
 
-        //localTextView.setTextSize(30.0F);
         Typeface face = Typeface.createFromAsset(mContext.getAssets(), "Roboto-Thin.ttf");
-        //localTextView.setTypeface(face);
         Intent localIntent = new Intent(mContext.getApplicationContext(), SpacedService.class);
         localIntent.putExtra("KEY1", "Value to be used by the service");
         mContext.getApplicationContext().startService(localIntent);
         tips = (TextView) v.findViewById(R.id.tips);
         tips.setTypeface(face);
-        SpannableString localSpannableString = new SpannableString("Humans more easily remember or learn items when they are studied a few times spaced over a long time span rather than repeatedly studied in a short span of time\n\n" +
-                "Just click on the + icon and start adding notes and let the app handle the rest\n\n" +
-                "Warning: Having too many notes at once could lead to multiple notification making this app unusable, limit to few notes at a time to get the most from the app");
+        SpannableString localSpannableString = new SpannableString("当你在长时间下间隔几次对于知识复习将会更容易记住知识，而不是短时间内多次记忆\n\n" +
+                "只需要选择下方中间按钮即对应的类别，之后再点击+号进行添加相应类别下的知识笔记即可\n\n" +
+                "注意：最好一次只添加单个笔记，而不是快速创建多个，不然会使得该时刻通知过多导致程序出错！");
         tips.setText(localSpannableString);
 
         Bundle bundle = getArguments();
@@ -111,9 +108,7 @@ public class NotesFragment extends Fragment {
     }
 
     public List<NoteItems> getDataForListView() {
-        // items = new NotesDataSource(mContext.getApplicationContext()).getAllNotes();
         items = new NotesDataSource(mContext.getApplicationContext()).getNotesOfClass(notes_class);
-        // Log.d(TAG, "getDataForListView: "+items.get(0).toString());
         Collections.sort(items, new Comparator<NoteItems>(){
             public int compare(NoteItems s1, NoteItems s2) {
                 return s1.total_reviews.compareToIgnoreCase(s2.total_reviews);
@@ -178,9 +173,9 @@ public class NotesFragment extends Fragment {
             review_time_min_s[1] = Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(review_time)) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(review_time));
             String review_time_str = String.format("%d min, %d sec", review_time_min_s);
 
-            localTextView2.setText("Last seen: " + str + " ago");
-            localTextView3.setText("Notification sent: " + localNoteItems.total_reviews + " times");
-            localTextView4.setText("Total review: " + review_time_str);
+            localTextView2.setText("最后查看时间: " + str + " 之前");
+            localTextView3.setText("通知发送次数: " + localNoteItems.total_reviews + " 次");
+            localTextView4.setText("总复习时间: " + review_time_str);
             return paramView;
         }
     }

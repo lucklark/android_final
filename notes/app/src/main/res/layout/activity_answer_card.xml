@@ -33,7 +33,6 @@
             android:text="Content goes here which will be a lot"
             android:textSize="20dp"
             android:padding="5dp"
-
             android:layout_height="wrap_content" />
     </ScrollView>
 </LinearLayout>
