@@ -384,7 +384,7 @@ notification = new Notification.Builder(this)
 
 设计的UML类图：
 
-![uml](./img/uml.png)
+![uml](./assets/uml.png)
 
 应用执行的主要流程可用下图表示：
 
