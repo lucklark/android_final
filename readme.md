@@ -310,9 +310,9 @@ notification = new Notification.Builder(this)
 
 以条形图为例：
 
-![](/Users/xx/Desktop/android_final/assets/截屏2020-07-07 下午1.23.24-4099889.png)
+![](./assets/截屏2020-07-07 下午1.23.24-4099889.png)
 
-![](/Users/xx/Desktop/android_final/assets/截屏2020-07-07 下午1.24.15-4099913.png)
+![](./assets/截屏2020-07-07 下午1.24.15-4099913.png)
 
 以上部分为表格约束函数，包括：最大横坐标数目、横坐标单位、是否显示背景表格等内容。
 
@@ -350,11 +350,11 @@ notification = new Notification.Builder(this)
 
 - 横坐标，默认的为数字，这里需要改成每个note的title。所以我们需要重写该类：
 
-  ![](/Users/xx/Desktop/android_final/assets/截屏2020-07-07 下午1.29.53-4099872.png)
+  ![](./assets/截屏2020-07-07 下午1.29.53-4099872.png)
 
 - 纵坐标，需要加上单位
 
-  ![](/Users/xx/Desktop/android_final/assets/截屏2020-07-07 下午1.30.47.png)
+  ![](./assets/截屏2020-07-07 下午1.30.47.png)
 
 #### 数据的及时修改
 
