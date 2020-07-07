@@ -7,6 +7,7 @@ import android.text.SpannedString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +46,8 @@ public class statisticsFragment extends Fragment implements OnChartValueSelected
     private ArrayList<NoteItems> items;
     private BarChart mChart;
     private PieChart pChart;
+    private TextView statTitle;
+    private String notes_class;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -65,6 +68,9 @@ public class statisticsFragment extends Fragment implements OnChartValueSelected
 
         getList();
 
+        statTitle = (TextView) v.findViewById(R.id.stat_title);
+        statTitle.setText(notes_class + " 的复习时间统计");
+
         mChart = (BarChart) v.findViewById(R.id.chart1);
         initBarChart();
 
@@ -75,7 +81,7 @@ public class statisticsFragment extends Fragment implements OnChartValueSelected
 
     public void getList() {
         Bundle bundle = getArguments();
-        String notes_class = bundle.getString("note_class");
+        notes_class = bundle.getString("note_class");
 
         items = new NotesDataSource(mContext.getApplicationContext()).getNotesOfClass(notes_class);
     }

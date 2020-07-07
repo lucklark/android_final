@@ -79,7 +79,7 @@
             android:clickable="false"
             android:scaleType="centerInside"
             android:background="#00000000"
-            android:src="@drawable/ic_user_regular" />
+            android:src="@drawable/ic_stat_regular" />
 
     </LinearLayout>
 

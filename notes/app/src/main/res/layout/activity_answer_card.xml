@@ -13,7 +13,6 @@
     <TextView
         android:id="@+id/title_answercard"
         android:layout_width="fill_parent"
-        android:text="Title"
         android:textSize="20dp"
         android:padding="5dp"
 
@@ -30,7 +29,6 @@
         <TextView
             android:id="@+id/content_answercard"
             android:layout_width="fill_parent"
-            android:text="Content goes here which will be a lot"
             android:textSize="20dp"
             android:padding="5dp"
             android:layout_height="wrap_content" />

@@ -45,11 +45,11 @@ import com.homework.notes.persistence.SQLiteHelper;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, ClassFragment.ClasstoActivityListener, NotesFragment.toActivityListener {
     private Fragment notes_frag;
     private Fragment class_frag;
-    private Fragment usr_frag;
+    private Fragment stat_frag;
 
     private ImageButton notes_button;
     private ImageButton class_button;
-    private ImageButton usr_button;
+    private ImageButton stat_button;
 
     private TextView selected_class_text;
 
@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initEvent(); // fragmentation event initialization
 
+
         setSelected(1);
         selected_class = DEFAULT_CLASS;
         requestAllPower();
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initView() {
         notes_button = (ImageButton) findViewById(R.id.notes_btn);
         class_button = (ImageButton) findViewById(R.id.class_btn);
-        usr_button = (ImageButton) findViewById(R.id.usr_btn);
+        stat_button = (ImageButton) findViewById(R.id.usr_btn);
 
         notes_lay = (LinearLayout) findViewById(R.id.notes_lay);
         class_lay = (LinearLayout) findViewById(R.id.class_lay);
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     void resetBtn() {
         notes_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_clipboard_regular));
         class_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_copy_regular));
-        usr_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_user_regular));
+        stat_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_stat_regular));
         selected_class_text.setTextColor(this.getColor(R.color.regular));
         selected_class_text.setAlpha(0.5f);
     }
@@ -171,12 +172,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ftr.show(class_frag);
                 break;
             case 2:
-                if(usr_frag == null) {
-                    usr_frag = statisticsFragment.NewInstance(selected_class);
-                    ftr.add(R.id.tab_frame, usr_frag);
+                if(stat_frag == null) {
+                    stat_frag = statisticsFragment.NewInstance(selected_class);
+                    ftr.add(R.id.tab_frame, stat_frag);
                 }
-                usr_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_user_solid));
-                ftr.show(usr_frag);
+                stat_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_stat_solid));
+                ftr.show(stat_frag);
                 break;
         }
 
@@ -191,8 +192,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(class_frag != null) {
             ftr.hide(class_frag);
         }
-        if(usr_frag != null) {
-            ftr.hide(usr_frag);
+        if(stat_frag != null) {
+            ftr.hide(stat_frag);
         }
     }
 
@@ -204,28 +205,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String new_class_name = editText.getText().toString();
-                        ClassDataSource class_data_src = new ClassDataSource(MainActivity.this);
-                        long ret = class_data_src.insertClass(new_class_name);
-
-                        if(ret > 0) {
-                            // get transaction
-                            FragmentManager fm = getSupportFragmentManager();
-                            // begin transaction
-                            ftr = fm.beginTransaction();
-                            hideTransaction(ftr);
-                            ftr.remove(class_frag);
-                            class_frag = new ClassFragment();
-                            ftr.add(R.id.tab_frame, class_frag);
-                            ftr.commit();
-
-                            Toast t = Toast.makeText(MainActivity.this, "Create new class \"" + editText.getText().toString()+"\"", Toast.LENGTH_LONG);
-                            t.setGravity(Gravity.CENTER,0,800);
-                            t.show();
+                        if(new_class_name.length() == 0)
+                        {
+                            Toast.makeText(getApplicationContext(),"Class name cannot be empty!",Toast.LENGTH_LONG).show();
                         }
-                        else if (ret < 0){
-                            Toast t = Toast.makeText(MainActivity.this, "Class " + editText.getText().toString() + "existed", Toast.LENGTH_LONG);
-                            t.setGravity(Gravity.CENTER,0,800);
-                            t.show();
+                        else{
+                            ClassDataSource class_data_src = new ClassDataSource(MainActivity.this);
+                            long ret = class_data_src.insertClass(new_class_name);
+
+                            if(ret > 0) {
+                                // get transaction
+                                FragmentManager fm = getSupportFragmentManager();
+                                // begin transaction
+                                ftr = fm.beginTransaction();
+                                hideTransaction(ftr);
+                                ftr.remove(class_frag);
+                                class_frag = new ClassFragment();
+                                ftr.add(R.id.tab_frame, class_frag);
+                                ftr.commit();
+
+                                Toast t = Toast.makeText(MainActivity.this, "Create new class \"" + editText.getText().toString()+"\"", Toast.LENGTH_LONG);
+                                t.setGravity(Gravity.CENTER,0,800);
+                                t.show();
+                            }
+                            else if (ret < 0){
+                                Toast t = Toast.makeText(MainActivity.this, "Class " + editText.getText().toString() + "existed", Toast.LENGTH_LONG);
+                                t.setGravity(Gravity.CENTER,0,800);
+                                t.show();
+                            }
                         }
 
                     }
@@ -310,14 +317,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ftr.remove(notes_frag);
         }
         //这一步用于数据的切换
-        if(usr_frag != null) {
-            ftr.remove(usr_frag);
+        if(stat_frag != null) {
+            ftr.remove(stat_frag);
         }
 
         notes_frag = NotesFragment.newInstance(selected_class);
-        usr_frag = statisticsFragment.NewInstance(selected_class);
+        stat_frag = statisticsFragment.NewInstance(selected_class);
         ftr.add(R.id.tab_frame, notes_frag);
-        ftr.add(R.id.tab_frame, usr_frag);
+        ftr.add(R.id.tab_frame, stat_frag);
         ftr.commit();
     }
 
