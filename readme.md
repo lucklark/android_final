@@ -19,6 +19,8 @@
 - **操作系统**：Windows/Mac OS
 - **IDE**：Android Studio
 
+==为了避免您在Github上看不到图片，请在/etc/hosts中加入：199.232.28.133 raw.githubusercontent.com==
+
 ## 成员分工
 
 （介绍成员分工情况）
@@ -526,8 +528,6 @@ notification = new Notification.Builder(this)
 
 - `NewInstance(String note_class)`：类的实例化，加入参数方便实例化后得到相关的数据。
 - `onCreateView()`该Fragment的加载函数。组件均在内部加载
-
-
 
 
 
