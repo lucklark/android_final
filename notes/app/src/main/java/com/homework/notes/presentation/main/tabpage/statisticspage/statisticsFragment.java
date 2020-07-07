@@ -1,26 +1,21 @@
-package com.homework.notes.presentation.main.tabpage.usrpage;
+package com.homework.notes.presentation.main.tabpage.statisticspage;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannedString;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -38,19 +33,14 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.homework.notes.R;
 
-import com.homework.notes.persistence.ClassDataSource;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import com.homework.notes.persistence.NotesDataSource;
 import com.homework.notes.persistence.datastructure.NoteItems;
 
 
-public class UsrFragment extends Fragment implements OnChartValueSelectedListener {
-    private static final String TAG = "UsrFragment";
+public class statisticsFragment extends Fragment implements OnChartValueSelectedListener {
+    private static final String TAG = "statisticsFragment";
     private Context mContext;
     private ArrayList<NoteItems> items;
     private BarChart mChart;
@@ -62,16 +52,16 @@ public class UsrFragment extends Fragment implements OnChartValueSelectedListene
     }
 
     //另写新的构造函数，使class_name能够传入该fragment
-    public static UsrFragment NewInstance(String note_class) {
-        UsrFragment usrFragment = new UsrFragment();
+    public static statisticsFragment NewInstance(String note_class) {
+        statisticsFragment statisticsFragment = new statisticsFragment();
         Bundle bundle = new Bundle();
         bundle.putString("note_class", note_class);
-        usrFragment.setArguments(bundle);
-        return usrFragment;
+        statisticsFragment.setArguments(bundle);
+        return statisticsFragment;
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.usr_layout,container,false);
+        View v = inflater.inflate(R.layout.statistics_layout,container,false);
 
         getList();
 
@@ -88,7 +78,6 @@ public class UsrFragment extends Fragment implements OnChartValueSelectedListene
         String notes_class = bundle.getString("note_class");
 
         items = new NotesDataSource(mContext.getApplicationContext()).getNotesOfClass(notes_class);
-//        Log.d(TAG, "getDataForListView: "+items.get(0).total_review_time);
     }
 
     //定义条形表
@@ -162,8 +151,14 @@ public class UsrFragment extends Fragment implements OnChartValueSelectedListene
             set1.setValues(yVals1);
             mChart.getData().notifyDataChanged();
             mChart.notifyDataSetChanged();
-        } else {
-            set1 = new BarDataSet(yVals1, "class:"+items.get(0).note_class);
+        }
+        else if(yVals1.size() == 0)
+        {
+            return;
+        }
+        else {
+
+            set1 = new BarDataSet(yVals1, "类别为:"+items.get(0).note_class);
             set1.setDrawIcons(false);
 
             ArrayList<IBarDataSet> dataSets = new ArrayList<>();
@@ -241,6 +236,9 @@ public class UsrFragment extends Fragment implements OnChartValueSelectedListene
     }
 
     private void setData(ArrayList<PieEntry> entries)  {
+        if(items.size() == 0){
+            return;
+        }
         PieDataSet dataSet = new PieDataSet(entries, items.get(0).note_class);
         dataSet.setSliceSpace(3f);
         dataSet.setSelectionShift(5f);

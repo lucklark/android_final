@@ -17,12 +17,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.nfc.Tag;
 import android.os.Bundle;
 
 import android.text.SpannableString;
-import android.text.util.Linkify;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -41,7 +38,7 @@ import com.homework.notes.presentation.main.tabpage.classpage.ClassFragment;
 import com.homework.notes.presentation.main.tabpage.notespage.NewNotes;
 import com.homework.notes.presentation.main.tabpage.notespage.NotesFragment;
 import com.homework.notes.R;
-import com.homework.notes.presentation.main.tabpage.usrpage.UsrFragment;
+import com.homework.notes.presentation.main.tabpage.statisticspage.statisticsFragment;
 import com.homework.notes.persistence.ClassDataSource;
 import com.homework.notes.persistence.SQLiteHelper;
 
@@ -175,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case 2:
                 if(usr_frag == null) {
-                    usr_frag = UsrFragment.NewInstance(selected_class);
+                    usr_frag = statisticsFragment.NewInstance(selected_class);
                     ftr.add(R.id.tab_frame, usr_frag);
                 }
                 usr_button.setImageDrawable(getResources().getDrawable(R.drawable.ic_user_solid));
@@ -318,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         notes_frag = NotesFragment.newInstance(selected_class);
-        usr_frag = UsrFragment.NewInstance(selected_class);
+        usr_frag = statisticsFragment.NewInstance(selected_class);
         ftr.add(R.id.tab_frame, notes_frag);
         ftr.add(R.id.tab_frame, usr_frag);
         ftr.commit();

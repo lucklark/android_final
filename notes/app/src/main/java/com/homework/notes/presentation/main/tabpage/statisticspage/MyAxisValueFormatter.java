@@ -1,4 +1,4 @@
-package com.homework.notes.presentation.main.tabpage.usrpage;
+package com.homework.notes.presentation.main.tabpage.statisticspage;
 
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;

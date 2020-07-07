@@ -49,7 +49,6 @@
         <service
             android:name="com.homework.notes.toolkit.SpacedService"
             android:enabled="true"
-            android:icon="@drawable/ic_launcher"
             >
         </service>
 

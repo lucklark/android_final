@@ -125,7 +125,7 @@ public class ClassFragment extends Fragment {
             TextView class_name = v.findViewById(R.id.class_name);
             TextView notes_num = v.findViewById(R.id.notes_num);
             class_name.setText(class_item.class_name);
-            notes_num.setText("containing " + String.valueOf(class_item.notes_num) + " notes");
+            notes_num.setText("包括 " + String.valueOf(class_item.notes_num) + " 项笔记");
 
             ImageButton del_class_btn = v.findViewById(R.id.del_class_btn);
 
