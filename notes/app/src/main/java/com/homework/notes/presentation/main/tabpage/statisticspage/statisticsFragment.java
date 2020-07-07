@@ -117,7 +117,7 @@ public class statisticsFragment extends Fragment implements OnChartValueSelected
         YAxis leftAxis = mChart.getAxisLeft();
 //        leftAxis.addLimitLine(limitLine);
 
-        leftAxis.setLabelCount(8, false);
+        leftAxis.setLabelCount(9, false);
         leftAxis.setValueFormatter(custom);
         leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         leftAxis.setSpaceTop(15f);
@@ -146,10 +146,10 @@ public class statisticsFragment extends Fragment implements OnChartValueSelected
         int i = 0;
 
         for(NoteItems it : items) {
-            float mins = (Float.valueOf(it.total_review_time)).floatValue();
-            mins = mins/(1000*60);
+            int mins = (int)(Float.valueOf(it.total_review_time)).floatValue();
+            mins = mins/1000;
 
-            yVals1.add(new BarEntry(i, mins));
+            yVals1.add(new BarEntry(i, (float)mins));
             i++;
         }
 
