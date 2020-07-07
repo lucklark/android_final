@@ -90,7 +90,6 @@ public class statisticsFragment extends Fragment implements OnChartValueSelected
         mChart.setDrawGridBackground(false);
         mChart.getDescription().setEnabled(false);
         // if more than 60 entries are displayed in the chart, no values will be
-        // drawn
         mChart.setMaxVisibleValueCount(60);
         // scaling can now only be done on x- and y-axis separately
         mChart.setPinchZoom(false);

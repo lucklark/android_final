@@ -57,7 +57,7 @@ public class NotesFragment extends Fragment {
         NotesFragment notes_frag = new NotesFragment();
         Bundle bundle = new Bundle();
         bundle.putString("note_class",note_class);
-        Log.d("Notes", note_class);
+//        Log.d("Notes", note_class);
         notes_frag.setArguments(bundle);
         return notes_frag;
     }

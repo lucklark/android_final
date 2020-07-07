@@ -4,7 +4,7 @@
 
 李赛尉 17343062
 
-李秀祥
+李秀祥 17343065
 
 陆俞因 17343081
 
@@ -16,7 +16,7 @@
 
 ## 开发环境
 
-- **操作系统**：Windows
+- **操作系统**：Windows/Mac OS
 - **IDE**：Android Studio
 
 ## 成员分工
@@ -39,7 +39,7 @@
 
 实现 `Activity` 到 `Fragment` 的通信，基本步骤如下：
 
-1. 实现 `Fragment` 的实例化方法，生成 `Bundle`；
+1. 实现 `Fragment` 的实例化方法，生成 `Bundle`。接着调用函数`putString(String, String)`将要传递的信息加入bundle中。
 
 ```java
 // Fragment
@@ -50,26 +50,27 @@ public static NotesFragment newInstance(String note_class) {
     notes_frag.setArguments(bundle);
     return notes_frag;
 }
+
 ```
 
 2. 在 `Activity` 中调用 `Fragment` 的实例化方法，以传入参数的形式实现通信；
 
-   ```java
-   // MainActivity
-   notes_frag = NotesFragment.newInstance(selected_class);
-   ```
+```java
+// MainActivity
+notes_frag = NotesFragment.newInstance(selected_class);
+```
 
 3. 在 `Fragment` 的 `onCreateView` 生命周期解析 `Bundle` 获取通信信息；
 
-   ```java
-   // Fragment
-   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       ...
-   	Bundle bundle = getArguments();
-       notes_class = bundle.getString("note_class");
-       ...
-   }
-   ```
+```java
+// Fragment
+public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    ...
+	Bundle bundle = getArguments();
+    notes_class = bundle.getString("note_class");
+    ...
+}
+```
 
  #### 回调函数
 
@@ -107,9 +108,42 @@ public static NotesFragment newInstance(String note_class) {
 
 我们的应用涉及较多的数据库操作，包括表内以及跨表的 CRUD (增删改查)，我们通过封装数据库操作相关接口(`persistence/NotesDataSource.java` 和 `persistence/ClassDataSource.java`)简化设计和实现，降低程序的耦合度。
 
-在数据显示方面，我们使用了 `<ListView>` 和 `Adapter`，通过 `Adapter` 更新 UI 的数据显示。
+首先通过继承`SQLiteOpenHelper`来对数据库的增删改查进行封装。这里以开表为例：
 
+```java
+    public void onCreate(SQLiteDatabase database) {
+        database.execSQL(" CREATE TABLE " + TABLE_NOTES + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_TITLE + " TEXT NOT NULL, " +
+                COLUMN_LAST_REVIEWED + " TEXT NOT NULL, " +
+                COLUMN_TOTAL_REVIEWS + " INT NOT NULL, " +
+                COLUMN_TOTAL_REVIEW_TIME + " TEXT NOT NULL, " +
+                COLUMN_CONTENT + " TEXT NOT NULL, " +
+                COLUMN_NOTE_CLASS + " TEXT NOT NULL);"
+        );
+     }
+```
 
+通过这一步封装，就可以直接创建出来属于note和class的数据库接口了。然后就开始封装具体某个元素的数据库接口。以note的增加数据为例：先写好相应的的sql语句，然后再使用上面封装好的`SQLiteHelper`进行操作。
+
+```java
+    public long incrementTotalReviews(long id)
+    {
+        this.open();	//访问数据库
+        String sql = "UPDATE " + SQLiteHelper.TABLE_NOTES +
+                " SET " + SQLiteHelper.COLUMN_TOTAL_REVIEWS + "=" + SQLiteHelper.COLUMN_TOTAL_REVIEWS + "+1" +
+                " WHERE " + SQLiteHelper.COLUMN_ID + " = " + id;
+
+        database.execSQL(sql);	//数据库执行查询语句
+        this.close();	//关闭访问数据库
+        return 0;
+
+    }
+```
+
+在数据显示，我们使用了 `<ListView>` 和 `Adapter`，通过 `BaseAdapter` 更新 UI 的数据显示。
+
+![](./assets/截屏2020-07-07 下午12.50.23.png)
 
 ### 3.图文本添加以及显示
 
@@ -190,8 +224,6 @@ public Drawable getDrawable(String source) {
 
 当然需要注意的是要把原先的换行符`"\n"`换成`<br>`才行，不然不会识别。
 
-
-
 ### 4.通知功能
 
 通过在`SpacedService`中通过`handler`的`postDelayed`来实现定时提示，而具体的时间分布则通过`notificationRequired`函数来进行，根据已提醒次数和一定时间间隔来控制是否加入提醒队列`items`，然后对于其队列中note进行提醒记忆，同时更新对应数据库中通知次数字段。每分钟会进行一次检查有无通知并进行发送。
@@ -230,8 +262,6 @@ notification = new Notification.Builder(this)
 
 而对于低于API26版本的则直接通过`NotificationCompat.Builder`进行创建即可。
 
-
-
 功能信息
 
 （确定APP的所需要实现的功能，此内容将作为检查APP是否功能完善的重要依据）
@@ -248,6 +278,106 @@ notification = new Notification.Builder(this)
    2. 退出笔记的详情页面时，退出复习状态，更新笔记的复习总时长，同时更新该笔记所属类别的复习总时长；
    3. 统计页显示统计数据图表。
 
+### 5.统计图表
+
+本模块主要用于统计每个class的note内容，以及每次为note工作所花费的时间。主要有两个表格：条形图和饼图。主要的工具为：MPAndroidChart
+
+#### 准备工作
+
+*该工具并非本地自带库，所以需要进行稍微的设置*
+
+1. 在项目目录下，修改`build.gradle`引入maven链接：
+
+   ```
+   allprojects {
+       repositories {
+           google()
+           jcenter()
+           maven { url 'https://jitpack.io' }	//加入部分
+       }
+   }
+   ```
+
+2. 在app目录下，修改`build.gradle`因为相关依赖：
+
+   ```
+   dependencies {
+       implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+   }
+   ```
+
+#### 具体实现
+
+以条形图为例：
+
+![](/Users/xx/Desktop/android_final/assets/截屏2020-07-07 下午1.23.24-4099889.png)
+
+![](/Users/xx/Desktop/android_final/assets/截屏2020-07-07 下午1.24.15-4099913.png)
+
+以上部分为表格约束函数，包括：最大横坐标数目、横坐标单位、是否显示背景表格等内容。
+
+接下来就是关于表格数据的添加，数据已经存放在了`ArrayList<NoteItem> item`中，所以需要通过遍历将其包含的复习时间取出来，当作表格数据：
+
+```java
+        ArrayList<BarEntry> yVals1 = new ArrayList<>();
+
+        int i = 0;
+
+        for(NoteItems it : items) {
+            yVals1.add(new BarEntry(i, Float.valueOf(it.total_review_time).floatValue()));
+            i++;
+        }
+```
+
+数据已经获得。后续将数据转化为条形图可用的`DataSet`：
+
+```java
+            set1 = new BarDataSet(yVals1, "class:"+items.get(0).note_class);
+            set1.setDrawIcons(false);
+
+            ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+            dataSets.add(set1);
+
+            BarData data = new BarData(dataSets);
+            data.setValueTextSize(10f);
+
+            data.setBarWidth(0.9f);
+
+            mChart.setData(data);
+```
+
+#### 横、纵坐标的自定义实现：
+
+- 横坐标，默认的为数字，这里需要改成每个note的title。所以我们需要重写该类：
+
+  ![](/Users/xx/Desktop/android_final/assets/截屏2020-07-07 下午1.29.53-4099872.png)
+
+- 纵坐标，需要加上单位
+
+  ![](/Users/xx/Desktop/android_final/assets/截屏2020-07-07 下午1.30.47.png)
+
+#### 数据的及时修改
+
+为了能够在选择class、对数据删除或者增加后，表格的数据能够及时修改，我们需要在`MainActivity`中加入部分内容。内容具体在每个`NoteFragment`修改之后，这样就可以实现同步的变化。
+
+```java
+    public void readdClassFrag() {
+        // get transaction
+        FragmentManager fm = getSupportFragmentManager();
+        // begin transaction
+        ftr = fm.beginTransaction();
+        hideTransaction(ftr);
+        if(class_frag != null) {
+            ftr.remove(class_frag);
+        }
+        class_frag = new ClassFragment();
+        ftr.add(R.id.tab_frame, class_frag);
+        ftr.commit();
+    }
+```
+
+
+
 ## 实现方法
 
 （下面内容属于第三次考核，依个人写作习惯和项目情况，自己组织语言和结构。需要包括**需求分析（用例图），设计（类图，流程图）等**，完整展示APP的实现方法。此内容将作为提问环节的重要依据。）
@@ -262,7 +392,7 @@ notification = new Notification.Builder(this)
 
 项目的主要模块介绍如下：
 
-### MainActivity.java
+#### 1. MainActivity.java
 
 主页面代码，对应主布局 `tab_layout.xml`。通过 `FrameLayout`+`Fragment` 实现 Tab 选项卡，控制笔记页、类别页、统计页间的切换，并实现各个子页间的间接通信，同时控制 `ActionBar` 的按键事件。主要功能包括：
 
@@ -276,9 +406,7 @@ notification = new Notification.Builder(this)
 - `deleteNotesInform(String)`: 实现了笔记页的回调函数，接收笔记页删除笔记的信息，并更新类别页的显示；
 - `setSelectedClass(String)`: 实现了类别页的回调函数，取得用户点击选中的类别，并重设笔记页的显示，即在笔记页显示选中类的所有笔记。
 
-
-
-### ClassFragment.java
+#### 2.ClassFragment.java
 
 类别页面代码，对应类别页布局 `class_layout.xml` 以及类别项布局 `class_item.xml`。主要功能包括：
 
@@ -286,9 +414,7 @@ notification = new Notification.Builder(this)
 - `interface ClasstoActivityListener`: `ClassFragment` 向 `MainActivity` 通信的回调接口；
 - `onContextItemSelected(MenuItem)`: 设置了类别页中上下文菜单删除键的点击事件，实现删除类别(同时删除该类别的所有笔记)。
 
-
-
-### NotesFragment.java
+#### 3.NotesFragment.java
 
 笔记主页面代码，对应笔记页布局 `activity_notes.xml` 以及笔记项布局 `list_items.xml`。主要功能包括：
 
@@ -297,13 +423,11 @@ notification = new Notification.Builder(this)
 - `interface toActivityListener`: `NotesFragment` 向 `MainActivity` 通信的回调接口；
 - `onContextItemSelected(MenuItem)`: 设置了笔记页中上下文菜单删除键的点击事件，实现删除笔记，并调用回调函数通知 `MainActivity` 同时更新类别页的显示。
 
-
-
-### Persistence
+#### 4.Persistence
 
 持久层，定义了数据库的数据结构并封装了数据库的接口。
 
-#### Data Structure
+#### 5.Data Structure
 
 类别的数据结构，对应 `ClassItems.java`。
 
@@ -329,15 +453,16 @@ notification = new Notification.Builder(this)
 | note_class           | String    | 笔记所属类别名           |
 | total_review_time    | String    | 复习该笔记的总时长       |
 
+**两个表的公共表头为：note_class = class_name。**这样就可以知道了class的名字，就可以查询出对应class下的所有note内容。
 
+#### 6.SQLiteHelper.java
 
-#### SQLiteHelper.java
+通过实现`SQLiterOpenHelper`，创建和更新 SQLite 数据库，创建类别表和笔记表。
 
-创建和更新 SQLite 数据库，创建类别表和笔记表。
+- `onCreate(SQLiteDatabase)`：创建数据库中的表
+- `onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)`：更新表格中的数据
 
-
-
-#### ClassDataSource.java
+#### 7.ClassDataSource.java
 
 实现操作类别表的接口。主要功能包括：
 
@@ -348,9 +473,7 @@ notification = new Notification.Builder(this)
 - `updateClassReviewTime(long, String)`: 复习笔记时，更新该类别的复习总时长；
 - `getAllClass()`: 取得所有类别的数据。
 
-
-
-#### NotesDataSource.java
+#### 8.NotesDataSource.java
 
 实现操作笔记表的接口。主要功能包括：
 
@@ -364,9 +487,7 @@ notification = new Notification.Builder(this)
 - `getNotesOfClass(String)`: 取得某类别的所有笔记数据；
 - `getAllNotesForNotification()`: 取得所有需要复习的笔记。
 
-
-
-### AnswerCard.java
+#### 9.AnswerCard.java
 
 实现对于note详情页面的显示。相关函数包括：
 
@@ -375,9 +496,7 @@ notification = new Notification.Builder(this)
 - `onOptionsItemSelected(MenuItem)`:菜单点击事件处理。
 - `onStop()`:重写`onStop`方法，为了实现对于进入详情对于note累计复习时间的确定，并在退出时更新对应数据库项。
 
-
-
-### AppTagHandler.java
+#### 10.AppTagHandler.java
 
 继承于Html.TagHandler，为了将图片对应html标签解析并且显示在popWindow上来进行放大查看。相关函数包括：
 
@@ -385,9 +504,7 @@ notification = new Notification.Builder(this)
 - `handleTag(boolean,String,Editable,XMLReader)`:解析标签img的图片
 - 内部类`ClickableImage`继承于`ClickableSpan`，用于设置图片的点击事件以及相应操作。
 
-
-
-### NewNotes.java
+#### 11.NewNotes.java
 
 对于新note的创建。相关函数包括：
 
@@ -396,14 +513,21 @@ notification = new Notification.Builder(this)
 - `onOptionsItemSelected(MenuItem)`:菜单点击事件处理。
 - `onActivityResult(int, int, Intent)`:处理从MediaStore获取的图片信息并传入RichText中的`insertImage`函数中对于其插入结果进行显示。
 
-
-
-### SpacedService.java
+#### 12.SpacedService.java
 
 主要是为了实现对于note的定时提醒通知功能。相关函数包括：
 
 - `onCreate()`：创建`hander`且通过`postDelayed`来实现定时对于符合条件的需要通知的note进行通知来及时进行记忆，其周期为一分钟。
 - `notification(long,String,String,String)`:对于API版本高于26的，先对于`NotificationChannel`进行设置，然后在`notificationManager`中对于其渠道进行创建，然后对于通知`notification`的创建以及绑定对应渠道id来进行显示通知；而对于低于API26版本的则直接通过`NotificationCompat.Builder`进行创建即可。
+
+#### 13.UsrFragment
+
+该文件用于显示统计图表。具体内容类似于`NotesFragment.java`。其内包很两个组件：mChart、pChart。分别表示条形图和饼图。
+
+- `NewInstance(String note_class)`：类的实例化，加入参数方便实例化后得到相关的数据。
+- `onCreateView()`该Fragment的加载函数。组件均在内部加载
+
+
 
 
 
