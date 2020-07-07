@@ -7,7 +7,6 @@ public class MyAxisValueFormatter implements IAxisValueFormatter {
 
     @Override
     public String getFormattedValue(float value, AxisBase axis) {
-        int temp = (int)value;
-        return temp/60+1 + " min";
+        return value/60 + " min";
     }
 }

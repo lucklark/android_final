@@ -146,7 +146,10 @@ public class statisticsFragment extends Fragment implements OnChartValueSelected
         int i = 0;
 
         for(NoteItems it : items) {
-            yVals1.add(new BarEntry(i, Float.valueOf(it.total_review_time).floatValue()));
+            float mins = (Float.valueOf(it.total_review_time)).floatValue();
+            mins = mins/(1000*60);
+
+            yVals1.add(new BarEntry(i, mins));
             i++;
         }
 
