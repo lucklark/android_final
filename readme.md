@@ -19,7 +19,7 @@
 - **操作系统**：Windows/Mac OS
 - **IDE**：Android Studio
 
-==为了避免您在Github上看不到图片，请在/etc/hosts中加入：199.232.28.133 raw.githubusercontent.com==
+*为了避免您在Github上看不到图片，请在/etc/hosts中加入：199.232.28.133 raw.githubusercontent.com*
 
 ## 成员分工
 
