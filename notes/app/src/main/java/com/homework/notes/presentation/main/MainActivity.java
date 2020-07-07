@@ -71,8 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final  String TAG = "MainActivity";
 
 
-    protected void onCreate(Bundle paramBundle)
-    {
+    protected void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
         //setContentView(R.layout.activity_notes);
         setContentView(R.layout.tab_layout);
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setSelected(1);
         selected_class = DEFAULT_CLASS;
-
         requestAllPower();
     }
 
@@ -118,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClick(View v) {
+
         switch (v.getId()) {
             case R.id.notes_lay:
                 setSelected(0);
@@ -126,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 setSelected(1);
                 break;
             case R.id.usr_lay:
+
                 setSelected(2);
                 break;
         }
@@ -237,20 +237,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void onCreateContextMenu(ContextMenu paramContextMenu, View paramView, ContextMenu.ContextMenuInfo paramContextMenuInfo)
-    {
+    public void onCreateContextMenu(ContextMenu paramContextMenu, View paramView, ContextMenu.ContextMenuInfo paramContextMenuInfo) {
         super.onCreateContextMenu(paramContextMenu, paramView, paramContextMenuInfo);
         getMenuInflater().inflate(R.menu.context, paramContextMenu);
     }
 
-    public boolean onCreateOptionsMenu(Menu paramMenu)
-    {
+    public boolean onCreateOptionsMenu(Menu paramMenu) {
         getMenuInflater().inflate(R.menu.notes, paramMenu);
         return true;
     }
 
-    public boolean onOptionsItemSelected(MenuItem paramMenuItem)
-    {
+    public boolean onOptionsItemSelected(MenuItem paramMenuItem) {
         int i = paramMenuItem.getItemId();
         if (i == R.id.newNotes)
         {
