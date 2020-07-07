@@ -316,10 +316,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(notes_frag != null) {
             ftr.remove(notes_frag);
         }
-        //这一步用于数据的切换
-        if(stat_frag != null) {
-            ftr.remove(stat_frag);
-        }
 
         notes_frag = NotesFragment.newInstance(selected_class);
         stat_frag = statisticsFragment.NewInstance(selected_class);

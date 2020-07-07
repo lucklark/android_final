@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannedString;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -138,6 +139,16 @@ public class statisticsFragment extends Fragment implements OnChartValueSelected
         legend.setXEntrySpace(4f);
 
         setBarChartData();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden){
+        super.onHiddenChanged(hidden);
+        if(!hidden){
+            getList();
+            initBarChart();
+            initPieChart();
+        }
     }
 
     private void setBarChartData() {
