@@ -522,7 +522,7 @@ notification = new Notification.Builder(this)
 - `onCreate()`：创建`hander`且通过`postDelayed`来实现定时对于符合条件的需要通知的note进行通知来及时进行记忆，其周期为一分钟。
 - `notification(long,String,String,String)`:对于API版本高于26的，先对于`NotificationChannel`进行设置，然后在`notificationManager`中对于其渠道进行创建，然后对于通知`notification`的创建以及绑定对应渠道id来进行显示通知；而对于低于API26版本的则直接通过`NotificationCompat.Builder`进行创建即可。
 
-#### 13.UsrFragment
+#### 13.StatisticsFragment
 
 该文件用于显示统计图表。具体内容类似于`NotesFragment.java`。其内包很两个组件：mChart、pChart。分别表示条形图和饼图。
 
