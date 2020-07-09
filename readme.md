@@ -226,17 +226,9 @@ append(s);
 public Drawable getDrawable(String source) {
     Drawable d = null;
     try {
-        if(source.length() == 1){
-          	//文本
-            int id = Integer.parseInt(source);
-            d = getResources().getDrawable(id);
-        }
-        else{
-          	//图片
+            //图片
             d = Drawable.createFromPath(source);
             d.setBounds(0,0,d.getIntrinsicWidth(),d.getIntrinsicHeight());
-        }
-
     } catch (Exception e) {
         e.printStackTrace();
     }
