@@ -53,6 +53,7 @@ public class AppTagHandler implements Html.TagHandler {
         if (tag.toLowerCase(Locale.getDefault()).equals("img")) {
             // 获取长度
             int len = output.length();
+
             // 获取图片地址
             ImageSpan[] images = output.getSpans(len-1, len, ImageSpan.class);
             String imgURL = images[0].getSource();

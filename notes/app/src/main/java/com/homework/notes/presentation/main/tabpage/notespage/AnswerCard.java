@@ -66,15 +66,8 @@ public class AnswerCard extends AppCompatActivity {
             public Drawable getDrawable(String source) {
                 Drawable d = null;
                 try {
-                    if(source.length() == 1){
-                        int id = Integer.parseInt(source);
-                        d = getResources().getDrawable(id);
-                    }
-                    else{
                         d = Drawable.createFromPath(source);
                         d.setBounds(0,0,d.getIntrinsicWidth(),d.getIntrinsicHeight());
-                    }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
